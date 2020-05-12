@@ -36,7 +36,7 @@ https://github.com/ojuba-org/othman
 
 لتنزيله على ويندوز للتجربة فقط
 
-![Download](https://github.com/yucefsourani/unofficial-othman-electronic-quran-browser/raw/master/windows_exe/othman-setup.exe "Screenshot")
+![Download](https://github.com/yucefsourani/unofficial-othman-electronic-quran-browser/releases/download/0.3.0beta/othman-setup.exe "Screenshot")
 
 # Screenshot
 
