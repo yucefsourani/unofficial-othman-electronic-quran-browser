@@ -42,7 +42,7 @@ https://github.com/ojuba-org/othman
 
 ![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture1.JPG "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture1.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture2.JPG "Screenshot")
 
 ![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture3.JPG "Screenshot")
 
