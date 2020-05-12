@@ -48,3 +48,6 @@ https://github.com/ojuba-org/othman
 
 ![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture4.JPG "Screenshot")
 
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture6.JPG "Screenshot")
+
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture7.JPG "Screenshot")

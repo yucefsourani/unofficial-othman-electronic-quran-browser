@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-02 17:11+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: othman/gtkUi.py:40
+msgid "Search results"
+msgstr ""
+
+#: othman/gtkUi.py:58 othman/gtkUi.py:221
+msgid "Sura"
+msgstr ""
+
+#: othman/gtkUi.py:181
+msgid "Amiri Font Missing!,install amiri font?"
+msgstr ""
+
+#: othman/gtkUi.py:184
+msgid "Re-run othman"
+msgstr ""
+
+#: othman/gtkUi.py:195 othman/gtkUi.py:357
+msgid "Othman Quran Browser"
+msgstr ""
+
+#: othman/gtkUi.py:228 othman/gtkUi.py:494
+msgid "choose a Sura"
+msgstr ""
+
+#: othman/gtkUi.py:275
+msgid "Dark Mode"
+msgstr ""
+
+#: othman/gtkUi.py:282
+msgid "Background Color"
+msgstr ""
+
+#: othman/gtkUi.py:284
+msgid "Foreground Color"
+msgstr ""
+
+#: othman/gtkUi.py:360
+msgid "Electronic Mus-haf"
+msgstr ""
+
+#: othman/gtkUi.py:378
+msgid "translator-credits"
+msgstr ""
+
+#: othman/gtkUi.py:486
+msgid "Copy to clipboard"
+msgstr ""
+
+#: othman/gtkUi.py:501
+msgid "Imla'i style"
+msgstr ""
+
+#: othman/gtkUi.py:502
+msgid "an Aya per line"
+msgstr ""
+
+#: othman/gtkUi.py:509
+msgid "Sorat:"
+msgstr ""
+
+#: othman/gtkUi.py:513
+msgid "Ayat from:"
+msgstr ""
+
+#: othman/gtkUi.py:515
+msgid "To"
+msgstr ""

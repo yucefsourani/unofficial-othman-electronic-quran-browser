@@ -1,0 +1,86 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# alsadi <alsadi@ojuba.org>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: othman 0.2.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-01 19:05+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Yucef Sourani <youssef.m.sourani@gmail.com>\n"
+"Language-Team:  <youssef.m.sourani@gmail.com>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: othman/gtkUi.py:40
+msgid "Search results"
+msgstr "نتائج البحث"
+
+#: othman/gtkUi.py:58 othman/gtkUi.py:221
+msgid "Sura"
+msgstr "سورة"
+
+#: othman/gtkUi.py:181
+msgid "Amiri Font Missing!,install amiri font?"
+msgstr "خط أميري غير موجود!,تثبيت خط أميري؟"
+
+#: othman/gtkUi.py:184
+msgid "Re-run othman"
+msgstr "أعد تشغيل مصحف عثمان"
+
+#: othman/gtkUi.py:196 othman/gtkUi.py:357
+msgid "Othman Quran Browser"
+msgstr "مصحف عثمان الإلكتروني"
+
+#: othman/gtkUi.py:229 othman/gtkUi.py:494
+msgid "choose a Sura"
+msgstr "اختر سورة"
+
+#: othman/gtkUi.py:275
+msgid "Dark Mode"
+msgstr "الوضع الداكن"
+
+#: othman/gtkUi.py:282
+msgid "Background Color"
+msgstr "لون الخلفية"
+
+#: othman/gtkUi.py:284
+msgid "Foreground Color"
+msgstr "لون الخط"
+
+#: othman/gtkUi.py:360
+msgid "Electronic Mus-haf"
+msgstr "مصحف الإلكتروني"
+
+#: othman/gtkUi.py:378
+msgid "translator-credits"
+msgstr  "مؤيد صالح السعدي <alsadi@ojuba.org>"
+
+#: othman/gtkUi.py:486
+msgid "Copy to clipboard"
+msgstr "نسخ إلى الحافظة"
+
+#: othman/gtkUi.py:501
+msgid "Imla'i style"
+msgstr "بالرسم الإملائي"
+
+#: othman/gtkUi.py:502
+msgid "an Aya per line"
+msgstr "كل آية على كل سطر مستقل"
+
+#: othman/gtkUi.py:509
+msgid "Sorat:"
+msgstr "سورة :"
+
+#: othman/gtkUi.py:513
+msgid "Ayat from:"
+msgstr "الآيات من:"
+
+#: othman/gtkUi.py:515
+msgid "To"
+msgstr "إلى :"

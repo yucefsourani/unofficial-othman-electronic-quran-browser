@@ -21,10 +21,10 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-LicenseFile=C:\msys64\home\yucef\othman-mov_to_python3\mov_to_python3_2\unofficial-othman-electronic-quran-browse\LICENSE-en
-OutputDir=C:\msys64\home\yucef\othman-mov_to_python3\mov_to_python3_2\unofficial-othman-electronic-quran-browse\windows_exe
+LicenseFile=C:\msys64\home\yucef\unofficial-othman-electronic-quran-browser\LICENSE-en
+OutputDir=C:\msys64\home\yucef\windows_exe
 OutputBaseFilename=othman-setup
-SetupIconFile=C:\msys64\home\yucef\othman-mov_to_python3\mov_to_python3_2\unofficial-othman-electronic-quran-browse\othman.ico
+SetupIconFile=C:\msys64\home\yucef\unofficial-othman-electronic-quran-browser\othman.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -36,8 +36,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "C:\msys64\home\yucef\othman-mov_to_python3\mov_to_python3_2\unofficial-othman-electronic-quran-browse\dist\othman-browser\othman-browser.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\msys64\home\yucef\othman-mov_to_python3\mov_to_python3_2\unofficial-othman-electronic-quran-browse\dist\othman-browser\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\msys64\home\yucef\unofficial-othman-electronic-quran-browser\dist\othman-browser\othman-browser.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\msys64\home\yucef\unofficial-othman-electronic-quran-browser\dist\othman-browser\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
