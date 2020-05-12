@@ -1,4 +1,4 @@
-# unofficial-othman-electronic-quran-browse  (for testing only)
+# unofficial-othman-electronic-quran-browser  (for testing only)
 Unofficial Othman Electronic Quran Browser (for testing only)
 
 للتجربة فقط
@@ -36,18 +36,18 @@ https://github.com/ojuba-org/othman
 
 لتنزيله على ويندوز للتجربة فقط
 
-![Download](https://github.com/yucefsourani/unofficial-othman-electronic-quran-browse/raw/master/windows_exe/othman-setup.exe "Screenshot")
+![Download](https://github.com/yucefsourani/unofficial-othman-electronic-quran-browser/raw/master/windows_exe/othman-setup.exe "Screenshot")
 
 # Screenshot
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture1.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture1.JPG "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture2.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture1.JPG "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture3.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture3.JPG "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture4.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture4.JPG "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture6.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture6.JPG "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browse/master/Capture7.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture7.JPG "Screenshot")
