@@ -121,8 +121,21 @@ class searchWindow(Gtk.Window):
 ###############################################################################
 
 class ShowTarajemTafasir(Gtk.Window):
-    def __init__(self, w=None,tafasir_data_location=None,tooltip="",add_title="",title_="",sura_n=1,aya_n=1,sura="",aya="",msg_if_faild = ""):
+    def __init__(self, w=None,tafasir_data_location=None,tooltip="",add_title="",title_="",sura_n=1,aya_n=1,sura="",aya="",msg_if_faild = "",all_audio=None,istarajem=True):
         Gtk.Window.__init__(self)
+        self.suwar_info = {'1': '7', '2': '286', '3': '200', '4': '176', '5': '120', '6': '165', '7': '206', '8': '75', '9': '129', '10': '109', 
+                           '11': '123', '12': '111', '13': '43', '14': '52', '15': '99', '16': '128', '17': '111', '18': '110', '19': '98', 
+                            '20': '135', '21': '112', '22': '78', '23': '118', '24': '64', '25': '77', '26': '227', '27': '93', '28': '88', 
+                            '29': '69', '30': '60', '31': '34', '32': '30', '33': '73', '34': '54', '35': '45', '36': '83', '37': '182', 
+                            '38': '88', '39': '75', '40': '85', '41': '54', '42': '53', '43': '89', '44': '59', '45': '37', '46': '35', 
+                            '47': '38', '48': '29', '49': '18', '50': '45', '51': '60', '52': '49', '53': '62', '54': '55', '55': '78', 
+                            '56': '96', '57': '29', '58': '22', '59': '24', '60': '13', '61': '14', '62': '11', '63': '11', '64': '18', 
+                            '65': '12', '66': '12', '67': '30', '68': '52', '69': '52', '70': '44', '71': '28', '72': '28', '73': '20', 
+                            '74': '56', '75': '40', '76': '31', '77': '50', '78': '40', '79': '46', '80': '42', '81': '29', '82': '19', 
+                            '83': '36', '84': '25', '85': '22', '86': '17', '87': '19', '88': '26', '89': '30', '90': '20', '91': '15', 
+                            '92': '21', '93': '11', '94': '8', '95': '8', '96': '19', '97': '5', '98': '8', '99': '8', '100': '11', '101': '11', 
+                            '102': '8', '103': '3', '104': '9', '105': '5', '106': '4', '107': '7', '108': '3', '109': '6', '110': '3', '111': '5', 
+                            '112': '4', '113': '5', '114': '5'}
         self.w            = w
         self.tafasir_data_location = tafasir_data_location
         self.tooltip      = tooltip
@@ -133,14 +146,16 @@ class ShowTarajemTafasir(Gtk.Window):
         self.aya          = aya
         self.msg_if_faild = msg_if_faild
         self.title_       = title_
+        self.__all_audio  = all_audio
+        self.istarajem    = istarajem
         self.cleanr       = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
         self.set_size_request(600, 400)
-
+        self.max_sura_number = self.suwar_info[str(self.sura_n)]
+        self.pipeline = Gst.ElementFactory.make("playbin", "player")
+        
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT )
-        #self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        if w:
-            self.set_modal(True)
-            self.set_transient_for(w)
+
+        self.w.set_sensitive(False)
         self.set_deletable(True)
         self.set_title(self.title_)
         
@@ -159,9 +174,49 @@ class ShowTarajemTafasir(Gtk.Window):
         self.maincontainer = Gtk.VBox()
         self.add(self.maincontainer)
         self.connect("key-press-event", self._on_key_press)
-        self.connect('delete-event', self._on_cancel_button_clicked)
+        self.connect('delete-event', self._on_delete_event)
         self.__all_tafasir = self.get_all_tafasir_location()
+        self.othmancore = othmanCore()
         self.gui_()
+
+    def _stop_audio(self,button=False):
+        self.pipeline.set_state(Gst.State.NULL)
+
+    def _play_audio(self,button=False):
+        self._stop_audio()
+        aya   = self.aya_n
+        sura  = self.sura_n
+        aya_  = str(aya)
+        sura_ = str(sura)
+        q = self.__all_audio[self.audio_c.get_active_text()]
+
+        if aya==0 and sura not in (9,1) :
+            q = os.path.join(q,"001001.mp3")
+        else:
+            s_ = ("0"*(3-len(sura_)))+sura_
+            a_ = ("0"*(3-len(aya_)))+aya_
+            #q = os.path.join(q,sura_.zfill(4-len(sura_))+aya_.zfill(4-len(aya_))+".mp3")
+            q = os.path.join(q,s_+a_+".mp3")
+        if not os.path.isfile(q):
+            return
+        
+        if  sys.platform.startswith('win'):
+            q =  "file:///"+os.path.abspath(q).replace(os.sep, '/')
+        else:
+            q = "file://"+os.path.abspath(q)
+
+        self.pipeline.set_property('uri',q)
+        self.pipeline.set_state(Gst.State.PLAYING)
+
+        
+    def _on_key_press(self,widget, event):
+        print(event.keyval)
+        if  event.keyval == Gdk.KEY_Left  :
+            self.rewind_b.emit("clicked",self.entry,self.entry_handler)
+                
+        elif   event.keyval == Gdk.KEY_Right  :
+            self.forward_b.emit("clicked",self.entry,self.entry_handler)
+        self.queue_draw()
 
     def _on_add_tafasir_clicked(self,button):
         self.add_w = AddData(self,self.tafasir_data_location,self.add_title)
@@ -190,12 +245,129 @@ class ShowTarajemTafasir(Gtk.Window):
             return result
         return False
 
+    def on_back_aya(self,button,entry,entry_handler):
+        listboxrow = self.listbox_ .get_selected_row()
+        if not listboxrow:
+            return
+        if self.aya_n-1==0:
+            return
+        self.aya_n-=1
+        with GObject.Object.handler_block(entry,entry_handler):
+            entry.set_text(str(self.aya_n))
+        self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
+        t  = listboxrow.get_child().props.label
+        db = self.__all_tafasir[t]
+        self.aya_info(db,t)
+        
+    def on_forward_aya(self,button,entry,entry_handler):
+        listboxrow = self.listbox_ .get_selected_row()
+        if not listboxrow:
+            return
+        if self.aya_n+1>int(self.max_sura_number):
+            return
+        self.aya_n+=1
+        with GObject.Object.handler_block(entry,entry_handler):
+            entry.set_text(str(self.aya_n))
+        self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
+        t  = listboxrow.get_child().props.label
+        db = self.__all_tafasir[t]
+        self.aya_info(db,t)
+
+    def on_entry_activate(self,entry):
+        text = entry.get_text()
+        listboxrow = self.listbox_.get_selected_row()
+        if not listboxrow:
+            return
+        try:
+            it = int(text)
+        except:
+            return
+        if it>int(self.max_sura_number) or it==0:
+            return
+        else:
+            self.aya_n = it
+            self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
+            t  = listboxrow.get_child().props.label
+            db = self.__all_tafasir[t]
+            self.aya_info(db,t)
+            
     def gui_(self):
         self.remove(self.maincontainer)
         self.maincontainer.destroy()
         self.maincontainer = Gtk.HBox()
         self.add(self.maincontainer)
+        if self.sura_n not in (1,9) and self.aya_n==0:
+            self.aya_n=1
         if  self.__all_tafasir:
+            self.connect("key-press-event", self._on_key_press)#########################
+
+
+            hb = Gtk.HBox()
+            hb.set_spacing(2)
+            hb.pack_start(Gtk.VSeparator(), False, False, 6)
+            hb.pack_start(Gtk.Label(_("Audio")), False, False, 0)
+            self.audio_c = Gtk.ComboBoxText.new()
+            self.audio_c.set_wrap_width(5)
+            if self.__all_audio:
+                for i in self.__all_audio.keys():
+                    self.audio_c.append_text(i)
+                self.audio_c.set_tooltip_text(_("choose a Audio"))
+                self.audio_c.set_active(0)
+            else:
+                self.audio_c.set_sensitive(False)
+                self.audio_c.set_tooltip_text(_("No Audio Available"))
+            hb.pack_start(self.audio_c, False, False, 0)
+        
+            audiohb = Gtk.HBox()
+            audiohb.set_spacing(2)
+            img = Gtk.Image.new_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON)
+            self.play_b = Gtk.Button()
+            self.play_b.set_tooltip_text(_("Play"))
+            self.play_b.add(img)
+            audiohb.pack_start(self.play_b, False, False, 0)
+            self.play_b.connect("clicked", self._play_audio)
+        
+            img = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
+            self.stop_b = Gtk.Button()
+            self.stop_b.set_tooltip_text(_("Stop"))
+            self.stop_b.add(img)
+            audiohb.pack_start(self.stop_b, False, False, 0)
+            self.stop_b.connect("clicked", self._stop_audio)
+            
+            if not self.__all_audio:
+                self.play_b.set_sensitive(False)
+                self.stop_b.set_sensitive(False)
+
+            
+            self.header.pack_start(hb)
+            self.header.pack_start(audiohb)
+        
+            h = Gtk.HBox()
+            h.props.spacing = 10
+            self.entry = Gtk.Entry()
+            self.entry.set_max_width_chars(3)
+            self.entry.set_input_purpose(Gtk.InputPurpose.DIGITS)
+            self.entry.set_text(str(self.aya_n))
+            self.entry_handler = self.entry.connect("activate",self.on_entry_activate)
+            label_aya_number = Gtk.Label()
+            label_aya_number.props.label = "/{}".format(self.max_sura_number)
+    
+            img = Gtk.Image.new_from_icon_name("media-seek-backward", Gtk.IconSize.BUTTON)
+            self.rewind_b = Gtk.Button()
+            self.rewind_b.add(img)
+            h.pack_start(self.rewind_b, False, False, 0)
+            self.rewind_b.connect("clicked", self.on_back_aya,self.entry,self.entry_handler)
+
+            h.pack_start(self.entry, False, False, 0)
+            h.pack_start(label_aya_number, False, False, 0)
+            
+            img = Gtk.Image.new_from_icon_name("media-seek-forward", Gtk.IconSize.BUTTON)
+            self.forward_b = Gtk.Button()
+            self.forward_b.add(img)
+            h.pack_start(self.forward_b, False, False, 0)
+            self.forward_b.connect("clicked", self.on_forward_aya,self.entry,self.entry_handler)
+            
+            self.header.pack_end(h)
             sw1=Gtk.ScrolledWindow()
             sw1.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
             sw2=Gtk.ScrolledWindow()
@@ -206,21 +378,10 @@ class ShowTarajemTafasir(Gtk.Window):
             self.maincontainer.pack_start(sw2,True,True,0)
             
 
-            listbox_ = Gtk.ListBox()
-            sw1.add(listbox_)
+            self.listbox_ = Gtk.ListBox()
+            sw1.add(self.listbox_)
             self.__check = True
 
-            
-            for category in dict(sorted(self.__all_tafasir.items())).keys():
-                category_label = Gtk.Label()
-                category_label.set_label(category)
-                row_ = Gtk.ListBoxRow()
-                row_.props.activatable = True
-                row_.props.selectable = True
-                row_.add(category_label)
-                listbox_.add(row_)
-
-            listbox_.connect("row-selected",self.on_selected_row)
             self.text_v = Gtk.TextView()
             self.text_v.set_hexpand(True)
             self.text_v.set_vexpand(True)
@@ -230,6 +391,26 @@ class ShowTarajemTafasir(Gtk.Window):
             self.text_v.props.wrap_mode = Gtk.WrapMode.WORD
             self.buffer = self.text_v.get_buffer()
             sw2.add(self.text_v)
+            
+            if self.istarajem :
+                cc = self.w._current_tarajem
+            else:
+                cc = self.w._current_tafasir
+            for category in dict(sorted(self.__all_tafasir.items())).keys():
+                category_label = Gtk.Label()
+                category_label.set_label(category)
+                row_ = Gtk.ListBoxRow()
+                row_.props.activatable = True
+                row_.props.selectable = True
+                row_.add(category_label)
+                self.listbox_.add(row_)
+                if category==cc:
+                    self.listbox_.select_row(row_)
+
+            self.listbox_.connect("row-selected",self.on_selected_row)
+            if not cc:
+                self.listbox_.select_row(self.listbox_.get_row_at_index(0))
+            
         else:
             l = Gtk.Label()
             l.props.label = self.msg_if_faild
@@ -243,13 +424,21 @@ class ShowTarajemTafasir(Gtk.Window):
         t  = listboxrow.get_child().props.label
         db = self.__all_tafasir[t]
         self.aya_info(db,t)
+        if self.istarajem :
+            self.w._current_tarajem = t
+        else:
+            self.w._current_tafasir = t
 
         
-    def _on_cancel_button_clicked(self,*argv):
+    def _on_delete_event(self,*argv):
+        self.w.set_sensitive(True)
+        self._stop_audio()
         self.destroy()
         
     def _on_key_press(self,widget, event):
         if event.keyval == Gdk.KEY_Escape :
+            self.w.set_sensitive(True)
+            self._stop_audio()
             self.destroy()
             
     def in_text(self,line,end="\n\n"):
@@ -261,7 +450,7 @@ class ShowTarajemTafasir(Gtk.Window):
         start = self.buffer.get_start_iter()
         end = self.buffer.get_end_iter()
         self.buffer.delete(start, end)
-        
+
     def aya_info(self,db,table,text="text"):
         self.clear_text()
         try:
@@ -476,7 +665,7 @@ class AddData(Gtk.Window):
         
 class Yes_Or_No(Gtk.MessageDialog):
     def __init__(self,msg,parent=None,link_button="https://www.amirifont.org"):
-        Gtk.MessageDialog.__init__(self,buttons = Gtk.ButtonsType.OK_CANCEL)
+        Gtk.MessageDialog.__init__(self,buttons = Gtk.ButtonsType.YES_NO )
         self.props.message_type = Gtk.MessageType.QUESTION
         self.props.text         = msg
         self.p=parent
@@ -548,6 +737,9 @@ class othmanUi(Gtk.Window, othmanCore):
         
         ############################
         self.__can_play = True
+        self.__isfullscreen = False
+        self._current_tafasir = ""
+        self._current_tarajem = ""
         self.pipeline = Gst.ElementFactory.make("playbin", "player")
         self.pipeline2 = Gst.ElementFactory.make("playbin", "player")
         self.__bus1 = self.pipeline.get_bus()
@@ -1073,7 +1265,7 @@ class othmanUi(Gtk.Window, othmanCore):
             
         elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_f:
             self.search.grab_focus_without_selecting()
-            
+                
         elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_z:
             self.zoomIn()
             
@@ -1119,6 +1311,8 @@ class othmanUi(Gtk.Window, othmanCore):
         elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Right  :
             if self.audio_c.get_sensitive() and self.pipeline2.get_state(Gst.CLOCK_TIME_NONE )[1]==Gst.State.PLAYING:
                 self.seek_audio() 
+                
+
             
         """elif  (event.state & Gdk.ModifierType.SHIFT_MASK) and (event.state & Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK):
             print("dddddddddd)"""
@@ -1428,7 +1622,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self._stop_audio()
         ShowTarajemTafasir(self,self.tarajem_data_location ,
                     _("Add Tarajem Sources"),
-                    _("Add Tarajem from ayat"),_("Show Tarajem"),sura_n+1,aya_n,sura,aya,_("Tarajem Not Available"))
+                    _("Add Tarajem from ayat"),_("Show Tarajem"),sura_n+1,aya_n,sura,aya,_("Tarajem Not Available"),self.__all_audio,True)
 
     def get_current_info_aya_tafasir(self):
         sura_n,aya_n = self.get_sura_aya()
@@ -1439,7 +1633,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self._stop_audio()
         ShowTarajemTafasir(self,self.tafasir_data_location ,
                     _("Add Tafasir Sources"),
-                    _("Add Tafasir from ayat"),_("Show Tafasir"),sura_n+1,aya_n,sura,aya,_("Tafasir Not Available"))
+                    _("Add Tafasir from ayat"),_("Show Tafasir"),sura_n+1,aya_n,sura,aya,_("Tafasir Not Available"),self.__all_audio,False)
 
     def quit(self,*args):
         last_sura_aya_config  = self.get_last_sura_aya()
