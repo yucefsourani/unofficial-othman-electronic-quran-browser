@@ -871,7 +871,7 @@ class othmanUi(Gtk.Window, othmanCore):
         audiohb.set_spacing(2)
         img = Gtk.Image.new_from_icon_name("media-seek-backward", Gtk.IconSize.BUTTON)
         self.rewind_b = Gtk.Button()
-        self.rewind_b.set_tooltip_text(_("Seek Audio Previous"))
+        self.rewind_b.set_tooltip_text(_("Previous"))
         self.rewind_b.add(img)
         audiohb.pack_start(self.rewind_b, False, False, 0)
         self.rewind_b.connect("clicked", self.seek_audio,False)
@@ -887,7 +887,7 @@ class othmanUi(Gtk.Window, othmanCore):
 
         img = Gtk.Image.new_from_icon_name("media-seek-forward", Gtk.IconSize.BUTTON)
         self.forward_b = Gtk.Button()
-        self.forward_b.set_tooltip_text(_("Seek Audio Forward"))
+        self.forward_b.set_tooltip_text(_("Forward"))
         self.forward_b.add(img)
         audiohb.pack_start(self.forward_b, False, False, 0)
         self.forward_b.connect("clicked", self.seek_audio)
@@ -1469,6 +1469,7 @@ class othmanUi(Gtk.Window, othmanCore):
 
         """)
         dlg.set_website("http://othman.ojuba.org/")
+        dlg.set_version("0.7.0")
         dlg.set_website_label("http://othman.ojuba.org")
         dlg.set_authors(["Muayyad Saleh Alsadi <alsadi@ojuba.org>"])
         dlg.set_translator_credits(_("translator-credits"))

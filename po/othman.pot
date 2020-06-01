@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 17:11+0200\n"
+"POT-Creation-Date: 2020-06-01 15:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,70 +17,222 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: othman/gtkUi.py:40
-msgid "Search results"
-msgstr ""
-
-#: othman/gtkUi.py:58 othman/gtkUi.py:221
-msgid "Sura"
-msgstr ""
-
-#: othman/gtkUi.py:181
-msgid "Amiri Font Missing!,install amiri font?"
-msgstr ""
-
-#: othman/gtkUi.py:184
-msgid "Re-run othman"
-msgstr ""
-
-#: othman/gtkUi.py:195 othman/gtkUi.py:357
+#: ../Othman.desktop.in.h:1 ../othman/gtkUi.py:815 ../othman/gtkUi.py:1453
 msgid "Othman Quran Browser"
 msgstr ""
 
-#: othman/gtkUi.py:228 othman/gtkUi.py:494
-msgid "choose a Sura"
-msgstr ""
-
-#: othman/gtkUi.py:275
-msgid "Dark Mode"
-msgstr ""
-
-#: othman/gtkUi.py:282
-msgid "Background Color"
-msgstr ""
-
-#: othman/gtkUi.py:284
-msgid "Foreground Color"
-msgstr ""
-
-#: othman/gtkUi.py:360
+#: ../Othman.desktop.in.h:2 ../othman/gtkUi.py:1456
 msgid "Electronic Mus-haf"
 msgstr ""
 
-#: othman/gtkUi.py:378
+#: ../othman/gtkUi.py:48
+msgid "Search results"
+msgstr ""
+
+#: ../othman/gtkUi.py:67 ../othman/gtkUi.py:842
+msgid "Sura"
+msgstr ""
+
+#: ../othman/gtkUi.py:324 ../othman/gtkUi.py:856
+msgid "Audio"
+msgstr ""
+
+#: ../othman/gtkUi.py:330 ../othman/gtkUi.py:863 ../othman/gtkUi.py:1123
+msgid "choose a Audio"
+msgstr ""
+
+#: ../othman/gtkUi.py:337 ../othman/gtkUi.py:867
+msgid "No Audio Available"
+msgstr ""
+
+#: ../othman/gtkUi.py:344 ../othman/gtkUi.py:883 ../othman/gtkUi.py:1077
+msgid "Play"
+msgstr ""
+
+#: ../othman/gtkUi.py:351 ../othman/gtkUi.py:897
+msgid "Stop"
+msgstr ""
+
+#: ../othman/gtkUi.py:391
+msgid "Reset"
+msgstr ""
+
+#: ../othman/gtkUi.py:622
+msgid "Select ayt File"
+msgstr ""
+
+#: ../othman/gtkUi.py:624
+msgid "Choose Files"
+msgstr ""
+
+#: ../othman/gtkUi.py:633
+msgid "Open Data Location"
+msgstr ""
+
+#: ../othman/gtkUi.py:638
+msgid "Cancel"
+msgstr ""
+
+#: ../othman/gtkUi.py:658
+msgid "Please choose a files"
+msgstr ""
+
+#: ../othman/gtkUi.py:801
+msgid "Amiri Font Missing!,install amiri font?"
+msgstr ""
+
+#: ../othman/gtkUi.py:804
+msgid "Re-run othman"
+msgstr ""
+
+#: ../othman/gtkUi.py:837
+msgid "Copy To Clipboard"
+msgstr ""
+
+#: ../othman/gtkUi.py:849 ../othman/gtkUi.py:1608
+msgid "choose a Sura"
+msgstr ""
+
+#: ../othman/gtkUi.py:874
+msgid "Previous"
+msgstr ""
+
+#: ../othman/gtkUi.py:890
+msgid "Forward"
+msgstr ""
+
+#: ../othman/gtkUi.py:910
+msgid "Add Audio Sources"
+msgstr ""
+
+#: ../othman/gtkUi.py:922
+msgid "Zoom In"
+msgstr ""
+
+#: ../othman/gtkUi.py:930
+msgid "Zoom Out"
+msgstr ""
+
+#: ../othman/gtkUi.py:941
+msgid "Speed Up Auto Scroll"
+msgstr ""
+
+#: ../othman/gtkUi.py:951
+msgid "Auto Scroll"
+msgstr ""
+
+#: ../othman/gtkUi.py:961
+msgid "Speed Down Auto Scroll"
+msgstr ""
+
+#: ../othman/gtkUi.py:969
+msgid "Search"
+msgstr ""
+
+#: ../othman/gtkUi.py:978
+msgid "About"
+msgstr ""
+
+#: ../othman/gtkUi.py:987
+msgid "Dark Mode"
+msgstr ""
+
+#: ../othman/gtkUi.py:994
+msgid "Background Color"
+msgstr ""
+
+#: ../othman/gtkUi.py:996
+msgid "Foreground Color"
+msgstr ""
+
+#: ../othman/gtkUi.py:1080
+msgid "Tarajem"
+msgstr ""
+
+#: ../othman/gtkUi.py:1081
+msgid "Tafsir"
+msgstr ""
+
+#: ../othman/gtkUi.py:1082
+msgid "Copy"
+msgstr ""
+
+#: ../othman/gtkUi.py:1083
+msgid "bg Color"
+msgstr ""
+
+#: ../othman/gtkUi.py:1084
+msgid "fg  Color"
+msgstr ""
+
+#: ../othman/gtkUi.py:1113
+msgid "Add Tilawa audio from ayat"
+msgstr ""
+
+#: ../othman/gtkUi.py:1114
+msgid "Add Tilawa from ayat"
+msgstr ""
+
+#: ../othman/gtkUi.py:1475
 msgid "translator-credits"
 msgstr ""
 
-#: othman/gtkUi.py:486
+#: ../othman/gtkUi.py:1600
 msgid "Copy to clipboard"
 msgstr ""
 
-#: othman/gtkUi.py:501
+#: ../othman/gtkUi.py:1615
 msgid "Imla'i style"
 msgstr ""
 
-#: othman/gtkUi.py:502
+#: ../othman/gtkUi.py:1616
 msgid "an Aya per line"
 msgstr ""
 
-#: othman/gtkUi.py:509
+#: ../othman/gtkUi.py:1623
 msgid "Sorat:"
 msgstr ""
 
-#: othman/gtkUi.py:513
+#: ../othman/gtkUi.py:1627
 msgid "Ayat from:"
 msgstr ""
 
-#: othman/gtkUi.py:515
+#: ../othman/gtkUi.py:1629
 msgid "To"
+msgstr ""
+
+#: ../othman/gtkUi.py:1660
+msgid "Add Tarajem Sources"
+msgstr ""
+
+#: ../othman/gtkUi.py:1661
+msgid "Add Tarajem from ayat"
+msgstr ""
+
+#: ../othman/gtkUi.py:1661
+msgid "Show Tarajem"
+msgstr ""
+
+#: ../othman/gtkUi.py:1661
+msgid "Tarajem Not Available"
+msgstr ""
+
+#: ../othman/gtkUi.py:1671
+msgid "Add Tafasir Sources"
+msgstr ""
+
+#: ../othman/gtkUi.py:1672
+msgid "Add Tafasir from ayat"
+msgstr ""
+
+#: ../othman/gtkUi.py:1672
+msgid "Show Tafasir"
+msgstr ""
+
+#: ../othman/gtkUi.py:1672
+msgid "Tafasir Not Available"
+msgstr ""
+
+#: ../othman/gtkUi.py:1679
+msgid "Save Current Sura/Aya?"
 msgstr ""

@@ -57,4 +57,3 @@ setup (name='Othman', version=__version__,
       cmdclass={'build': my_build, 'clean': my_clean},
       data_files=data_files
 )
-

@@ -5,7 +5,7 @@ INSTALL=install
 PYTHON=/usr/bin/python3
 SOURCES=$(wildcard *.desktop.in)
 TARGETS=${SOURCES:.in=}
-TEST_DEPS=0
+#TEST_DEPS=0
 
 all: $(TARGETS) icons
 
@@ -23,7 +23,7 @@ pos:
 	make -C po all
 
 install: all
-	[ $(TEST_DEPS) == "1" ] && $(PYTHON) -c 'import gi; gi.require_version("Gtk", "3.0")'
+	#[ $(TEST_DEPS) == "1" ] && $(PYTHON) -c 'import gi; gi.require_version("Gtk", "3.0")'
 	rm othman-data/quran-kareem.png || :
 	$(PYTHON) setup.py install --prefix=$(PREFIX)
 	$(INSTALL) -d $(datadir)/applications/
@@ -32,7 +32,9 @@ install: all
 		install -d $(datadir)/icons/hicolor/$${i}x$${i}/apps; \
 		$(INSTALL) -m 0644 -D icons/Othman-$${i}.png $(datadir)/icons/hicolor/$${i}x$${i}/apps/Othman.png; \
 	done
-
+	install -d $(datadir)/pixmaps
+	$(INSTALL) -m 0644 -D Othman-128.png $(datadir)/pixmaps/Othman.png
+	
 %.desktop: %.desktop.in pos
 	echo "updating .desktop"
 	intltool-merge -d po $< $@
