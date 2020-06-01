@@ -142,6 +142,7 @@ class ShowTarajemTafasir(Gtk.Window):
         self.add_title    = add_title
         self.sura_n       = sura_n
         self.aya_n        = aya_n
+        self.CONST_AYA    = self.aya_n
         self.sura         = sura
         self.aya          = aya
         self.msg_if_faild = msg_if_faild
@@ -295,7 +296,13 @@ class ShowTarajemTafasir(Gtk.Window):
             db = self.__all_tafasir[t]
             self.aya_info(db,t)
             self.w.viewAya(self.aya_n)
-            
+
+    def _reset_audio(self,b):
+        self.aya_n = self.CONST_AYA
+        self.entry.set_text(str(self.aya_n))
+        self.entry.emit("activate")
+        
+        
     def gui_(self):
         self.remove(self.maincontainer)
         self.maincontainer.destroy()
@@ -303,12 +310,13 @@ class ShowTarajemTafasir(Gtk.Window):
         self.add(self.maincontainer)
         if self.sura_n not in (1,9) and self.aya_n==0:
             self.aya_n=1
+            self.CONST_AYA = 1
             self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
             self.w.viewAya(self.aya_n)
         if  self.__all_tafasir:
             self.isavailable = True
             self.connect("key-press-event", self._on_key_press)#########################
-
+            
 
             hb = Gtk.HBox()
             hb.set_spacing(2)
@@ -377,8 +385,15 @@ class ShowTarajemTafasir(Gtk.Window):
             self.forward_b.add(img)
             h.pack_start(self.forward_b, False, False, 0)
             self.forward_b.connect("clicked", self.on_forward_aya,self.entry,self.entry_handler)
+
+            img = Gtk.Image.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.BUTTON)
+            self.reset_b = Gtk.Button()
+            self.reset_b.set_tooltip_text(_("Reset"))
+            self.reset_b.add(img)
+            self.reset_b.connect("clicked", self._reset_audio)
             
             self.header.pack_end(h)
+            self.header.pack_end(self.reset_b)
             sw1=Gtk.ScrolledWindow()
             sw1.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
             sw2=Gtk.ScrolledWindow()
