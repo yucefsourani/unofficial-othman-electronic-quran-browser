@@ -135,7 +135,7 @@ class ShowTarajemTafasir(Gtk.Window):
                             '83': '36', '84': '25', '85': '22', '86': '17', '87': '19', '88': '26', '89': '30', '90': '20', '91': '15', 
                             '92': '21', '93': '11', '94': '8', '95': '8', '96': '19', '97': '5', '98': '8', '99': '8', '100': '11', '101': '11', 
                             '102': '8', '103': '3', '104': '9', '105': '5', '106': '4', '107': '7', '108': '3', '109': '6', '110': '3', '111': '5', 
-                            '112': '4', '113': '5', '114': '5'}
+                            '112': '4', '113': '5', '114': '6'}
         self.w            = w
         self.tafasir_data_location = tafasir_data_location
         self.tooltip      = tooltip
@@ -149,6 +149,7 @@ class ShowTarajemTafasir(Gtk.Window):
         self.__all_audio  = all_audio
         self.istarajem    = istarajem
         self.cleanr       = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+        self.isavailable  = False
         self.set_size_request(600, 400)
         self.max_sura_number = self.suwar_info[str(self.sura_n)]
         self.pipeline = Gst.ElementFactory.make("playbin", "player")
@@ -158,6 +159,7 @@ class ShowTarajemTafasir(Gtk.Window):
         self.w.set_sensitive(False)
         self.set_deletable(True)
         self.set_title(self.title_)
+        self.resize(self.w._current_tarajem_tafasir_window_width,self.w._current_tarajem_tafasir_window_height)
         
         self.header=Gtk.HeaderBar()
         self.header.set_show_close_button(True)
@@ -258,6 +260,7 @@ class ShowTarajemTafasir(Gtk.Window):
         t  = listboxrow.get_child().props.label
         db = self.__all_tafasir[t]
         self.aya_info(db,t)
+        self.w.viewAya(self.aya_n)
         
     def on_forward_aya(self,button,entry,entry_handler):
         listboxrow = self.listbox_ .get_selected_row()
@@ -272,6 +275,7 @@ class ShowTarajemTafasir(Gtk.Window):
         t  = listboxrow.get_child().props.label
         db = self.__all_tafasir[t]
         self.aya_info(db,t)
+        self.w.viewAya(self.aya_n)
 
     def on_entry_activate(self,entry):
         text = entry.get_text()
@@ -290,6 +294,7 @@ class ShowTarajemTafasir(Gtk.Window):
             t  = listboxrow.get_child().props.label
             db = self.__all_tafasir[t]
             self.aya_info(db,t)
+            self.w.viewAya(self.aya_n)
             
     def gui_(self):
         self.remove(self.maincontainer)
@@ -298,7 +303,10 @@ class ShowTarajemTafasir(Gtk.Window):
         self.add(self.maincontainer)
         if self.sura_n not in (1,9) and self.aya_n==0:
             self.aya_n=1
+            self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
+            self.w.viewAya(self.aya_n)
         if  self.__all_tafasir:
+            self.isavailable = True
             self.connect("key-press-event", self._on_key_press)#########################
 
 
@@ -312,7 +320,10 @@ class ShowTarajemTafasir(Gtk.Window):
                 for i in self.__all_audio.keys():
                     self.audio_c.append_text(i)
                 self.audio_c.set_tooltip_text(_("choose a Audio"))
-                self.audio_c.set_active(0)
+                if len(self.__all_audio)-1>self.w._current_tarajem_tafasir_audio_combo_active:
+                    self.audio_c.set_active(0)
+                else:
+                    self.audio_c.set_active(self.w._current_tarajem_tafasir_audio_combo_active)
             else:
                 self.audio_c.set_sensitive(False)
                 self.audio_c.set_tooltip_text(_("No Audio Available"))
@@ -432,12 +443,18 @@ class ShowTarajemTafasir(Gtk.Window):
         
     def _on_delete_event(self,*argv):
         self.w.set_sensitive(True)
+        self.w._current_tarajem_tafasir_window_width,self.w._current_tarajem_tafasir_window_height = self.get_size()
+        if self.isavailable:
+            self.w._current_tarajem_tafasir_audio_combo_active = self.audio_c.get_active()
         self._stop_audio()
         self.destroy()
         
     def _on_key_press(self,widget, event):
         if event.keyval == Gdk.KEY_Escape :
             self.w.set_sensitive(True)
+            self.w._current_tarajem_tafasir_window_width,self.w._current_tarajem_tafasir_window_height = self.get_size()
+            if self.isavailable:
+                self.w._current_tarajem_tafasir_audio_combo_active = self.audio_c.get_active()
             self._stop_audio()
             self.destroy()
             
@@ -684,7 +701,7 @@ class Yes_Or_No(Gtk.MessageDialog):
         self.show_all()
     def check(self):
         rrun = self.run()
-        if rrun == Gtk.ResponseType.OK:
+        if rrun == Gtk.ResponseType.YES:
             self.destroy()
             if self.p != None:
                 self.p.set_sensitive(True)
@@ -740,6 +757,9 @@ class othmanUi(Gtk.Window, othmanCore):
         self.__isfullscreen = False
         self._current_tafasir = ""
         self._current_tarajem = ""
+        self._current_tarajem_tafasir_window_width       = 600
+        self._current_tarajem_tafasir_window_height      = 400
+        self._current_tarajem_tafasir_audio_combo_active = 0
         self.pipeline = Gst.ElementFactory.make("playbin", "player")
         self.pipeline2 = Gst.ElementFactory.make("playbin", "player")
         self.__bus1 = self.pipeline.get_bus()
