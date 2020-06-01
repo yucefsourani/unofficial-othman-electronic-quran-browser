@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: othman 0.7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 15:18+0300\n"
+"POT-Creation-Date: 2020-06-01 15:40+0300\n"
 "PO-Revision-Date: 2010-04-28 18:31+0300\n"
 "Last-Translator: yucef <youssef.m.sourani@gmail.com>\n"
 "Language-Team: youssef.m.sourani@gmail.com\n"
@@ -205,7 +205,7 @@ msgstr "إضافة ملفات التراجم"
 
 #: ../othman/gtkUi.py:1661
 msgid "Add Tarajem from ayat"
-msgstr "إضافة ملفات التفاسير"
+msgstr "إضافة ملفات التراجم"
 
 #: ../othman/gtkUi.py:1661
 msgid "Show Tarajem"
