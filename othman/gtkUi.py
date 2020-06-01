@@ -1068,7 +1068,7 @@ class othmanUi(Gtk.Window, othmanCore):
                 #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([__aya]),self.cols[0])
         else:
             self.sura_c.set_active(0)
-            self.txt_list.get_selection().select_path((1,))
+            self.txt_list.get_selection().select_path((0,))
             #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([0]),self.cols[0])
 
         self.menu = Gtk.Menu()
