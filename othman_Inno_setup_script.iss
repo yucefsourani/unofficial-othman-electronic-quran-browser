@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "othman"
-#define MyAppVersion "0.3.0"
+#define MyAppVersion "0.7.0"
 #define MyAppPublisher " ojuba-org"
 #define MyAppURL "https://github.com/ojuba-org/othman"
 #define MyAppExeName "othman-browser.exe"
