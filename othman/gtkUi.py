@@ -183,9 +183,13 @@ class ShowTarajemTafasir(Gtk.Window):
         self.gui_()
 
     def _stop_audio(self,button=False):
+        if not self.stop_b.get_sensitive():
+            return 
         self.pipeline.set_state(Gst.State.NULL)
 
     def _play_audio(self,button=False):
+        if not self.play_b.get_sensitive():
+            return 
         self._stop_audio()
         aya   = self.aya_n
         sura  = self.sura_n
@@ -211,15 +215,6 @@ class ShowTarajemTafasir(Gtk.Window):
         self.pipeline.set_property('uri',q)
         self.pipeline.set_state(Gst.State.PLAYING)
 
-        
-    def _on_key_press(self,widget, event):
-        print(event.keyval)
-        if  event.keyval == Gdk.KEY_Left  :
-            self.rewind_b.emit("clicked",self.entry,self.entry_handler)
-                
-        elif   event.keyval == Gdk.KEY_Right  :
-            self.forward_b.emit("clicked",self.entry,self.entry_handler)
-        self.queue_draw()
 
     def _on_add_tafasir_clicked(self,button):
         self.add_w = AddData(self,self.tafasir_data_location,self.add_title)
@@ -248,7 +243,9 @@ class ShowTarajemTafasir(Gtk.Window):
             return result
         return False
 
-    def on_back_aya(self,button,entry,entry_handler):
+    def on_back_aya(self,button=None):
+        entry = self.entry
+        entry_handler = self.entry_handler
         listboxrow = self.listbox_ .get_selected_row()
         if not listboxrow:
             return
@@ -257,13 +254,15 @@ class ShowTarajemTafasir(Gtk.Window):
         self.aya_n-=1
         with GObject.Object.handler_block(entry,entry_handler):
             entry.set_text(str(self.aya_n))
-        self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
-        t  = listboxrow.get_child().props.label
-        db = self.__all_tafasir[t]
-        self.aya_info(db,t)
-        self.w.viewAya(self.aya_n)
+            self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
+            t  = listboxrow.get_child().props.label
+            db = self.__all_tafasir[t]
+            self.aya_info(db,t)
+            self.w.viewAya(self.aya_n)
         
-    def on_forward_aya(self,button,entry,entry_handler):
+    def on_forward_aya(self,button=None):
+        entry = self.entry
+        entry_handler = self.entry_handler
         listboxrow = self.listbox_ .get_selected_row()
         if not listboxrow:
             return
@@ -272,12 +271,31 @@ class ShowTarajemTafasir(Gtk.Window):
         self.aya_n+=1
         with GObject.Object.handler_block(entry,entry_handler):
             entry.set_text(str(self.aya_n))
-        self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
-        t  = listboxrow.get_child().props.label
-        db = self.__all_tafasir[t]
-        self.aya_info(db,t)
-        self.w.viewAya(self.aya_n)
+            self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
+            t  = listboxrow.get_child().props.label
+            db = self.__all_tafasir[t]
+            self.aya_info(db,t)
+            self.w.viewAya(self.aya_n)
 
+
+    def on_up_down(self,up=True):
+        selected_row = self.listbox_.get_selected_row()
+        if selected_row:
+            index_current_row = selected_row.get_index()
+            if up:
+                if index_current_row == 0 :
+                    return
+                check_row = self.listbox_.get_row_at_index(index_current_row-1)
+                if check_row:
+                    self.listbox_.select_row(check_row)
+            else:
+                check_row = self.listbox_.get_row_at_index(index_current_row+1)
+                if check_row:
+                    self.listbox_.select_row(check_row)
+                else:
+                    self.listbox_.select_row(self.listbox_.get_row_at_index(0))
+                
+            
     def on_entry_activate(self,entry):
         text = entry.get_text()
         listboxrow = self.listbox_.get_selected_row()
@@ -315,7 +333,6 @@ class ShowTarajemTafasir(Gtk.Window):
             self.w.viewAya(self.aya_n)
         if  self.__all_tafasir:
             self.isavailable = True
-            self.connect("key-press-event", self._on_key_press)#########################
             
 
             hb = Gtk.HBox()
@@ -356,10 +373,29 @@ class ShowTarajemTafasir(Gtk.Window):
             if not self.__all_audio:
                 self.play_b.set_sensitive(False)
                 self.stop_b.set_sensitive(False)
+            
+            zoom_in_out_hb = Gtk.HBox()
+            zoom_in_out_hb.pack_start(Gtk.VSeparator(),False, False, 6)
+            img = Gtk.Image()
+            img.set_from_stock(Gtk.STOCK_ZOOM_IN, Gtk.IconSize.BUTTON)
+            b = Gtk.Button()
+            b.set_tooltip_text(_("Zoom In"))
+            b.add(img)
+            zoom_in_out_hb.pack_start(b, False, False, 0)
+            b.connect("clicked", self.zoomIn)
+        
+            img = Gtk.Image()
+            img.set_from_stock(Gtk.STOCK_ZOOM_OUT, Gtk.IconSize.BUTTON)
+            b = Gtk.Button()
+            b.set_tooltip_text(_("Zoom Out"))
+            b.add(img)
+            zoom_in_out_hb.pack_start(b, False, False, 0)
+            b.connect("clicked", self.zoomOut)
 
             
             self.header.pack_start(hb)
             self.header.pack_start(audiohb)
+            self.header.pack_start(zoom_in_out_hb)
         
             h = Gtk.HBox()
             h.props.spacing = 10
@@ -375,7 +411,7 @@ class ShowTarajemTafasir(Gtk.Window):
             self.rewind_b = Gtk.Button()
             self.rewind_b.add(img)
             h.pack_start(self.rewind_b, False, False, 0)
-            self.rewind_b.connect("clicked", self.on_back_aya,self.entry,self.entry_handler)
+            self.rewind_b.connect("clicked", self.on_back_aya)
 
             h.pack_start(self.entry, False, False, 0)
             h.pack_start(label_aya_number, False, False, 0)
@@ -384,7 +420,7 @@ class ShowTarajemTafasir(Gtk.Window):
             self.forward_b = Gtk.Button()
             self.forward_b.add(img)
             h.pack_start(self.forward_b, False, False, 0)
-            self.forward_b.connect("clicked", self.on_forward_aya,self.entry,self.entry_handler)
+            self.forward_b.connect("clicked", self.on_forward_aya)
 
             img = Gtk.Image.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.BUTTON)
             self.reset_b = Gtk.Button()
@@ -400,23 +436,57 @@ class ShowTarajemTafasir(Gtk.Window):
             sw2.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
             
             sw1.set_size_request (150, 1)
-            self.maincontainer.pack_start(sw1,False,False,0)
-            self.maincontainer.pack_start(sw2,True,True,0)
+            
             
 
+        
+            paned = Gtk.Paned()
+            #paned.connect("button-press-event",self._on_paned_press_event)
+            paned.set_name("h_paned")
+            paned.props.wide_handle = True
+            self.maincontainer.pack_start(paned,True,True,0)
+
+
+            css = b"""paned separator.wide {
+
+                        background-image: linear-gradient(to left, transparent, transparent 1px, #999 1px, #999 4px, transparent 4px);
+                        background-size: 100% 15%;
+                        background-repeat: no-repeat;
+                        background-position: center center;
+                    }
+
+                    paned separator.wide:hover {
+                        background-image: linear-gradient(to left, transparent, transparent 1px, #555 1px, #555 4px, transparent 4px);
+                    }
+                    paned separator.wide:active {
+                        background-image: linear-gradient(to left, transparent, transparent 100px, #555 111px, #555 114px, transparent 114px);
+                    }
+                """
+            style_provider = Gtk.CssProvider()
+            style_provider.load_from_data(css)
+            Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        
             self.listbox_ = Gtk.ListBox()
             sw1.add(self.listbox_)
+            paned.add1(sw1)
             self.__check = True
 
-            self.text_v = Gtk.TextView()
+            self.text_v   = Gtk.TextView()
             self.text_v.set_hexpand(True)
             self.text_v.set_vexpand(True)
             self.text_v.props.editable = False
             self.text_v.props.cursor_visible = False
             self.text_v.props.justification = Gtk.Justification.CENTER
             self.text_v.props.wrap_mode = Gtk.WrapMode.WORD
-            self.buffer = self.text_v.get_buffer()
+            self.buffer   = self.text_v.get_buffer()
+            self.text_v_t = self.buffer.create_tag("s",size=self.w._current_tarajem_tafasir_font_size )
+            self.buffer.apply_tag(self.text_v_t, self.buffer.get_start_iter(), self.buffer.get_end_iter())
             sw2.add(self.text_v)
+            paned.add2(sw2)
+            if self.w._current_tarajem_tafasir_paned_position<=0:
+                self.w._current_tarajem_tafasir_paned_position = 1
+            paned.set_position(self.w._current_tarajem_tafasir_paned_position)
+            paned.connect("notify::position",self.__on_paned_position_changed)
             
             if self.istarajem :
                 cc = self.w._current_tarajem
@@ -441,10 +511,27 @@ class ShowTarajemTafasir(Gtk.Window):
             l = Gtk.Label()
             l.props.label = self.msg_if_faild
             self.maincontainer.add(l)
+
+        self.show_all()
+    
+
+    def __on_paned_position_changed(self,paned,props):
+        self.w._current_tarajem_tafasir_paned_position = paned.props.position
         
+    def zoomOut(self,button=None):
+        if self.w._current_tarajem_tafasir_font_size<6000:
+            self.w._current_tarajem_tafasir_font_size = 6000
+        self.w._current_tarajem_tafasir_font_size -= 500
+        self.text_v_t.props.size = self.w._current_tarajem_tafasir_font_size
+        self.buffer.apply_tag(self.text_v_t, self.buffer.get_start_iter(), self.buffer.get_end_iter())
 
         
-        self.show_all()
+    def zoomIn(self,button=None):
+        if self.w._current_tarajem_tafasir_font_size>30000:
+            self.w._current_tarajem_tafasir_font_size = 30000
+        self.w._current_tarajem_tafasir_font_size += 500
+        self.text_v_t.props.size = self.w._current_tarajem_tafasir_font_size 
+        self.buffer.apply_tag(self.text_v_t, self.buffer.get_start_iter(), self.buffer.get_end_iter())
         
     def on_selected_row(self, listbox,listboxrow):
         t  = listboxrow.get_child().props.label
@@ -461,7 +548,7 @@ class ShowTarajemTafasir(Gtk.Window):
         self.w._current_tarajem_tafasir_window_width,self.w._current_tarajem_tafasir_window_height = self.get_size()
         if self.isavailable:
             self.w._current_tarajem_tafasir_audio_combo_active = self.audio_c.get_active()
-        self._stop_audio()
+            self._stop_audio()
         self.destroy()
         
     def _on_key_press(self,widget, event):
@@ -470,8 +557,33 @@ class ShowTarajemTafasir(Gtk.Window):
             self.w._current_tarajem_tafasir_window_width,self.w._current_tarajem_tafasir_window_height = self.get_size()
             if self.isavailable:
                 self.w._current_tarajem_tafasir_audio_combo_active = self.audio_c.get_active()
-            self._stop_audio()
+                self._stop_audio()
             self.destroy()
+            
+        elif self.isavailable:
+            if  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Left  :
+                self.rewind_b.emit("clicked")
+                
+            elif   (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Right  :
+                self.forward_b.emit("clicked")
+                
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_z:
+                self.zoomIn()
+            
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_x:
+                self.zoomOut()
+            
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_d:
+                self._play_audio()
+                
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_s:
+                self._stop_audio()
+            
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Down :
+                self.on_up_down(False)
+            
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Up:
+                self.on_up_down()
             
     def in_text(self,line,end="\n\n"):
         line = line+end
@@ -499,6 +611,8 @@ class ShowTarajemTafasir(Gtk.Window):
                     self.in_text("<span foreground='green' size='x-large'>{}</span>".format(txt))
                     #self.show_all()
                     self.__check = True
+                    self.text_v_t.props.size = self.w._current_tarajem_tafasir_font_size 
+                    self.buffer.apply_tag(self.text_v_t, self.buffer.get_start_iter(), self.buffer.get_end_iter())
         except sqlite3.OperationalError:
             if self.__check:
                 self.__check = False
@@ -775,6 +889,8 @@ class othmanUi(Gtk.Window, othmanCore):
         self._current_tarajem_tafasir_window_width       = 600
         self._current_tarajem_tafasir_window_height      = 400
         self._current_tarajem_tafasir_audio_combo_active = 0
+        self._current_tarajem_tafasir_font_size          = 11000
+        self._current_tarajem_tafasir_paned_position     = 150
         self.pipeline = Gst.ElementFactory.make("playbin", "player")
         self.pipeline2 = Gst.ElementFactory.make("playbin", "player")
         self.__bus1 = self.pipeline.get_bus()
