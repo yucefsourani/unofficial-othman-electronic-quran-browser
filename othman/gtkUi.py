@@ -353,7 +353,32 @@ class ShowTarajemTafasir(Gtk.Window):
                 self.audio_c.set_sensitive(False)
                 self.audio_c.set_tooltip_text(_("No Audio Available"))
             hb.pack_start(self.audio_c, False, False, 0)
-        
+
+
+            img = Gtk.Image.new_from_icon_name("system-search-symbolic", Gtk.IconSize.BUTTON)
+            self.search_b = Gtk.Button()
+            self.search_b.set_tooltip_text(_("Search"))
+            self.search_b.add(img)
+
+            self.search_b.connect("clicked", self._on_search_button_clicked)
+            self.header.pack_start(self.search_b)
+            
+            self.revealer     = Gtk.Revealer()
+            self.revealer.set_transition_type(Gtk.RevealerTransitionType.SLIDE_LEFT)
+            
+            self.__old_search_text = ""
+            self.search_entry = Gtk.SearchEntry(placeholder_text="Search...")
+            self.search_entry.props.margin_start  = 15
+            self.search_entry.props.margin_end    = 15
+            self.search_entry.props.margin_top    = 5
+            self.search_entry.props.margin_bottom = 5
+            self.search_entry.props.max_length    = 30
+            #self.search_entry.set_size_request (100, 1)
+            self.revealer.add(self.search_entry)
+            self.header.pack_start(self.revealer)
+            
+
+            
             audiohb = Gtk.HBox()
             audiohb.set_spacing(2)
             img = Gtk.Image.new_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON)
@@ -436,17 +461,10 @@ class ShowTarajemTafasir(Gtk.Window):
             sw2.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
             
             sw1.set_size_request (150, 1)
-            
-            
-
         
             paned = Gtk.Paned()
-            #paned.connect("button-press-event",self._on_paned_press_event)
-            paned.set_name("h_paned")
             paned.props.wide_handle = True
             self.maincontainer.pack_start(paned,True,True,0)
-
-
             css = b"""paned separator.wide {
 
                         background-image: linear-gradient(to left, transparent, transparent 1px, #999 1px, #999 4px, transparent 4px);
@@ -465,7 +483,7 @@ class ShowTarajemTafasir(Gtk.Window):
             style_provider = Gtk.CssProvider()
             style_provider.load_from_data(css)
             Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        
+            
             self.listbox_ = Gtk.ListBox()
             sw1.add(self.listbox_)
             paned.add1(sw1)
@@ -506,6 +524,9 @@ class ShowTarajemTafasir(Gtk.Window):
             self.listbox_.connect("row-selected",self.on_selected_row)
             if not cc:
                 self.listbox_.select_row(self.listbox_.get_row_at_index(0))
+            self.listbox_.set_filter_func(self._listbox_filter_func,self.search_entry)
+            self.search_entry.connect("search-changed", self._on_search,self.listbox_)
+
             
         else:
             l = Gtk.Label()
@@ -514,7 +535,27 @@ class ShowTarajemTafasir(Gtk.Window):
 
         self.show_all()
     
-
+    def _on_search_button_clicked(self,button):
+        if self.revealer.get_reveal_child():
+            self.revealer.set_reveal_child(False)
+            self.__old_search_text = self.search_entry.get_text()
+            self.search_entry.set_text("") 
+        else:
+            self.revealer.set_reveal_child(True)
+            self.search_entry.set_text(self.__old_search_text)
+            self.search_entry.grab_focus_without_selecting()
+         
+    def _listbox_filter_func(self, listbox,entry):
+        text = entry.get_text()
+        if not text:
+            return listbox
+        lbl = listbox.get_child().props.label
+        if text.lower() in lbl.lower():
+            return listbox 
+            
+    def _on_search(self, entry,listbox):
+        listbox.invalidate_filter()
+        
     def __on_paned_position_changed(self,paned,props):
         self.w._current_tarajem_tafasir_paned_position = paned.props.position
         
@@ -573,17 +614,24 @@ class ShowTarajemTafasir(Gtk.Window):
             elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_x:
                 self.zoomOut()
             
-            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_d:
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_f:
                 self._play_audio()
                 
-            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_s:
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_d:
                 self._stop_audio()
             
             elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Down :
+                if self.revealer.get_reveal_child():
+                    return
                 self.on_up_down(False)
-            
+                
             elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_Up:
+                if self.revealer.get_reveal_child():
+                    return
                 self.on_up_down()
+                
+            elif  (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_s:
+                self.search_b.emit("clicked")
             
     def in_text(self,line,end="\n\n"):
         line = line+end
