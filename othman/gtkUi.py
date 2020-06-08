@@ -30,6 +30,7 @@ import threading
 import zipfile
 import sqlite3
 import re
+from urllib import request
 
 Gst.init(None)
 
@@ -151,6 +152,7 @@ class ShowTarajemTafasir(Gtk.Window):
         self.istarajem    = istarajem
         self.cleanr       = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
         self.isavailable  = False
+        self._all         = True
         self.set_size_request(600, 400)
         self.max_sura_number = self.suwar_info[str(self.sura_n)]
         self.pipeline = Gst.ElementFactory.make("playbin", "player")
@@ -173,7 +175,8 @@ class ShowTarajemTafasir(Gtk.Window):
         self.add_tafasir.add(img)
         self.headerhbox.pack_start(self.add_tafasir, False, False, 0)
         self.add_tafasir.connect("clicked", self._on_add_tafasir_clicked)
-        
+
+
         self.maincontainer = Gtk.VBox()
         self.add(self.maincontainer)
         self.connect("key-press-event", self._on_key_press)
@@ -217,13 +220,13 @@ class ShowTarajemTafasir(Gtk.Window):
 
 
     def _on_add_tafasir_clicked(self,button):
-        self.add_w = AddData(self,self.tafasir_data_location,self.add_title)
+        self.add_w = AddData(self,self.tafasir_data_location,self.add_title,self.istarajem)
         self.add_w.set_title(self.add_title)
         self.add_w.connect("success",self._on_add_tafasir_success)
         
     def _on_add_tafasir_success(self,w=None):
         self.__all_tafasir = self.get_all_tafasir_location()
-        self.add_w.destroy()
+        #self.add_w.destroy()
         self.gui_()
         #width , height = self.get_size()
         #self.add_w.destroy()
@@ -326,135 +329,136 @@ class ShowTarajemTafasir(Gtk.Window):
         self.maincontainer.destroy()
         self.maincontainer = Gtk.HBox()
         self.add(self.maincontainer)
+        
         if self.sura_n not in (1,9) and self.aya_n==0:
             self.aya_n=1
             self.CONST_AYA = 1
             self.aya = self.othmancore.getAyatIter(self.othmancore.ayaIdFromSuraAya(self.sura_n,self.aya_n)).fetchall()[0][0]
             self.w.viewAya(self.aya_n)
+            
         if  self.__all_tafasir:
             self.isavailable = True
-            
-
-            hb = Gtk.HBox()
-            hb.set_spacing(2)
-            hb.pack_start(Gtk.VSeparator(), False, False, 6)
-            hb.pack_start(Gtk.Label(_("Audio")), False, False, 0)
-            self.audio_c = Gtk.ComboBoxText.new()
-            self.audio_c.set_wrap_width(5)
-            if self.__all_audio:
-                for i in self.__all_audio.keys():
-                    self.audio_c.append_text(i)
-                self.audio_c.set_tooltip_text(_("choose a Audio"))
-                if len(self.__all_audio)-1>self.w._current_tarajem_tafasir_audio_combo_active:
-                    self.audio_c.set_active(0)
+            if  self._all :
+                hb = Gtk.HBox()
+                hb.set_spacing(2)
+                hb.pack_start(Gtk.VSeparator(), False, False, 6)
+                hb.pack_start(Gtk.Label(_("Audio")), False, False, 0)
+                self.audio_c = Gtk.ComboBoxText.new()
+                self.audio_c.set_wrap_width(5)
+                if self.__all_audio:
+                    for i in self.__all_audio.keys():
+                        self.audio_c.append_text(i)
+                    self.audio_c.set_tooltip_text(_("choose a Audio"))
+                    if len(self.__all_audio)-1>self.w._current_tarajem_tafasir_audio_combo_active:
+                        self.audio_c.set_active(0)
+                    else:
+                        self.audio_c.set_active(self.w._current_tarajem_tafasir_audio_combo_active)
                 else:
-                    self.audio_c.set_active(self.w._current_tarajem_tafasir_audio_combo_active)
-            else:
-                self.audio_c.set_sensitive(False)
-                self.audio_c.set_tooltip_text(_("No Audio Available"))
-            hb.pack_start(self.audio_c, False, False, 0)
+                    self.audio_c.set_sensitive(False)
+                    self.audio_c.set_tooltip_text(_("No Audio Available"))
+                hb.pack_start(self.audio_c, False, False, 0)
 
-
-            img = Gtk.Image.new_from_icon_name("system-search-symbolic", Gtk.IconSize.BUTTON)
-            self.search_b = Gtk.Button()
-            self.search_b.set_tooltip_text(_("Search"))
-            self.search_b.add(img)
-
-            self.search_b.connect("clicked", self._on_search_button_clicked)
-            self.header.pack_start(self.search_b)
             
-            self.revealer     = Gtk.Revealer()
-            self.revealer.set_transition_type(Gtk.RevealerTransitionType.SLIDE_LEFT)
+                img = Gtk.Image.new_from_icon_name("system-search-symbolic", Gtk.IconSize.BUTTON)
+                self.search_b = Gtk.Button()
+                self.search_b.set_tooltip_text(_("Search"))
+                self.search_b.add(img)
+                self.search_b.connect("clicked", self._on_search_button_clicked)
+                self.header.pack_start(self.search_b)
             
-            self.__old_search_text = ""
-            self.search_entry = Gtk.SearchEntry(placeholder_text="Search...")
-            self.search_entry.props.margin_start  = 15
-            self.search_entry.props.margin_end    = 15
-            self.search_entry.props.margin_top    = 5
-            self.search_entry.props.margin_bottom = 5
-            self.search_entry.props.max_length    = 30
-            #self.search_entry.set_size_request (100, 1)
-            self.revealer.add(self.search_entry)
-            self.header.pack_start(self.revealer)
+                self.revealer     = Gtk.Revealer()
+                self.revealer.set_transition_type(Gtk.RevealerTransitionType.SLIDE_LEFT)
+            
+                self.__old_search_text = ""
+                self.search_entry = Gtk.SearchEntry(placeholder_text="Search...")
+                self.search_entry.props.margin_start  = 15
+                self.search_entry.props.margin_end    = 15
+                self.search_entry.props.margin_top    = 5
+                self.search_entry.props.margin_bottom = 5
+                self.search_entry.props.max_length    = 30
+                #self.search_entry.set_size_request (100, 1)
+                self.revealer.add(self.search_entry)
+                self.header.pack_start(self.revealer)
             
 
             
-            audiohb = Gtk.HBox()
-            audiohb.set_spacing(2)
-            img = Gtk.Image.new_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON)
-            self.play_b = Gtk.Button()
-            self.play_b.set_tooltip_text(_("Play"))
-            self.play_b.add(img)
-            audiohb.pack_start(self.play_b, False, False, 0)
-            self.play_b.connect("clicked", self._play_audio)
+                audiohb = Gtk.HBox()
+                audiohb.set_spacing(2)
+                img = Gtk.Image.new_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON)
+                self.play_b = Gtk.Button()
+                self.play_b.set_tooltip_text(_("Play"))
+                self.play_b.add(img)
+                audiohb.pack_start(self.play_b, False, False, 0)
+                self.play_b.connect("clicked", self._play_audio)
         
-            img = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
-            self.stop_b = Gtk.Button()
-            self.stop_b.set_tooltip_text(_("Stop"))
-            self.stop_b.add(img)
-            audiohb.pack_start(self.stop_b, False, False, 0)
-            self.stop_b.connect("clicked", self._stop_audio)
+                img = Gtk.Image.new_from_icon_name("media-playback-stop", Gtk.IconSize.BUTTON)
+                self.stop_b = Gtk.Button()
+                self.stop_b.set_tooltip_text(_("Stop"))
+                self.stop_b.add(img)
+                audiohb.pack_start(self.stop_b, False, False, 0)
+                self.stop_b.connect("clicked", self._stop_audio)
             
-            if not self.__all_audio:
-                self.play_b.set_sensitive(False)
-                self.stop_b.set_sensitive(False)
+                if not self.__all_audio:
+                    self.play_b.set_sensitive(False)
+                    self.stop_b.set_sensitive(False)
             
-            zoom_in_out_hb = Gtk.HBox()
-            zoom_in_out_hb.pack_start(Gtk.VSeparator(),False, False, 6)
-            img = Gtk.Image()
-            img.set_from_stock(Gtk.STOCK_ZOOM_IN, Gtk.IconSize.BUTTON)
-            b = Gtk.Button()
-            b.set_tooltip_text(_("Zoom In"))
-            b.add(img)
-            zoom_in_out_hb.pack_start(b, False, False, 0)
-            b.connect("clicked", self.zoomIn)
+                zoom_in_out_hb = Gtk.HBox()
+                zoom_in_out_hb.pack_start(Gtk.VSeparator(),False, False, 6)
+                img = Gtk.Image()
+                img.set_from_stock(Gtk.STOCK_ZOOM_IN, Gtk.IconSize.BUTTON)
+                b = Gtk.Button()
+                b.set_tooltip_text(_("Zoom In"))
+                b.add(img)
+                zoom_in_out_hb.pack_start(b, False, False, 0)
+                b.connect("clicked", self.zoomIn)
         
-            img = Gtk.Image()
-            img.set_from_stock(Gtk.STOCK_ZOOM_OUT, Gtk.IconSize.BUTTON)
-            b = Gtk.Button()
-            b.set_tooltip_text(_("Zoom Out"))
-            b.add(img)
-            zoom_in_out_hb.pack_start(b, False, False, 0)
-            b.connect("clicked", self.zoomOut)
+                img = Gtk.Image()
+                img.set_from_stock(Gtk.STOCK_ZOOM_OUT, Gtk.IconSize.BUTTON)
+                b = Gtk.Button()
+                b.set_tooltip_text(_("Zoom Out"))
+                b.add(img)
+                zoom_in_out_hb.pack_start(b, False, False, 0)
+                b.connect("clicked", self.zoomOut)
 
             
-            self.header.pack_start(hb)
-            self.header.pack_start(audiohb)
-            self.header.pack_start(zoom_in_out_hb)
+                self.header.pack_start(hb)
+                self.header.pack_start(audiohb)
+                self.header.pack_start(zoom_in_out_hb)
         
-            h = Gtk.HBox()
-            h.props.spacing = 10
-            self.entry = Gtk.Entry()
-            self.entry.set_max_width_chars(3)
-            self.entry.set_input_purpose(Gtk.InputPurpose.DIGITS)
-            self.entry.set_text(str(self.aya_n))
-            self.entry_handler = self.entry.connect("activate",self.on_entry_activate)
-            label_aya_number = Gtk.Label()
-            label_aya_number.props.label = "/{}".format(self.max_sura_number)
+                h = Gtk.HBox()
+                h.props.spacing = 10
+                self.entry = Gtk.Entry()
+                self.entry.set_max_width_chars(3)
+                self.entry.set_input_purpose(Gtk.InputPurpose.DIGITS)
+                self.entry.set_text(str(self.aya_n))
+                self.entry_handler = self.entry.connect("activate",self.on_entry_activate)
+                label_aya_number = Gtk.Label()
+                label_aya_number.props.label = "/{}".format(self.max_sura_number)
     
-            img = Gtk.Image.new_from_icon_name("media-seek-backward", Gtk.IconSize.BUTTON)
-            self.rewind_b = Gtk.Button()
-            self.rewind_b.add(img)
-            h.pack_start(self.rewind_b, False, False, 0)
-            self.rewind_b.connect("clicked", self.on_back_aya)
+                img = Gtk.Image.new_from_icon_name("media-seek-backward", Gtk.IconSize.BUTTON)
+                self.rewind_b = Gtk.Button()
+                self.rewind_b.add(img)
+                h.pack_start(self.rewind_b, False, False, 0)
+                self.rewind_b.connect("clicked", self.on_back_aya)
 
-            h.pack_start(self.entry, False, False, 0)
-            h.pack_start(label_aya_number, False, False, 0)
+                h.pack_start(self.entry, False, False, 0)
+                h.pack_start(label_aya_number, False, False, 0)
             
-            img = Gtk.Image.new_from_icon_name("media-seek-forward", Gtk.IconSize.BUTTON)
-            self.forward_b = Gtk.Button()
-            self.forward_b.add(img)
-            h.pack_start(self.forward_b, False, False, 0)
-            self.forward_b.connect("clicked", self.on_forward_aya)
+                img = Gtk.Image.new_from_icon_name("media-seek-forward", Gtk.IconSize.BUTTON)
+                self.forward_b = Gtk.Button()
+                self.forward_b.add(img)
+                h.pack_start(self.forward_b, False, False, 0)
+                self.forward_b.connect("clicked", self.on_forward_aya)
 
-            img = Gtk.Image.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.BUTTON)
-            self.reset_b = Gtk.Button()
-            self.reset_b.set_tooltip_text(_("Reset"))
-            self.reset_b.add(img)
-            self.reset_b.connect("clicked", self._reset_audio)
-            
-            self.header.pack_end(h)
-            self.header.pack_end(self.reset_b)
+                img = Gtk.Image.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.BUTTON)
+                self.reset_b = Gtk.Button()
+                self.reset_b.set_tooltip_text(_("Reset"))
+                self.reset_b.add(img)
+                self.reset_b.connect("clicked", self._reset_audio)
+                
+                self.header.pack_end(h)
+                self.header.pack_end(self.reset_b)
+                
             sw1=Gtk.ScrolledWindow()
             sw1.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
             sw2=Gtk.ScrolledWindow()
@@ -510,6 +514,7 @@ class ShowTarajemTafasir(Gtk.Window):
                 cc = self.w._current_tarajem
             else:
                 cc = self.w._current_tafasir
+            self.listbox_.connect("row-selected",self.on_selected_row)
             for category in dict(sorted(self.__all_tafasir.items())).keys():
                 category_label = Gtk.Label()
                 category_label.set_label(category)
@@ -521,13 +526,12 @@ class ShowTarajemTafasir(Gtk.Window):
                 if category==cc:
                     self.listbox_.select_row(row_)
 
-            self.listbox_.connect("row-selected",self.on_selected_row)
+            
             if not cc:
                 self.listbox_.select_row(self.listbox_.get_row_at_index(0))
             self.listbox_.set_filter_func(self._listbox_filter_func,self.search_entry)
             self.search_entry.connect("search-changed", self._on_search,self.listbox_)
-
-            
+            self._all = False
         else:
             l = Gtk.Label()
             l.props.label = self.msg_if_faild
@@ -719,13 +723,87 @@ class UnpackZip(threading.Thread):
         #finally:
             #os.chdir(cwd)
         return True
-                
+
+class DownloadDataThread(object):    
+    def __init__(self,parent,pparent,revealer,spinner,link,location,unpack_target,download_button,cancel_button,progressbar):
+        self.parent          = parent
+        self.pparent         = pparent
+        self.revealer        = revealer
+        self.spinner         = spinner
+        self.link            = link
+        self.location        = location
+        self.unpack_target   = unpack_target
+        self.download_button = download_button
+        self.cancel_button   = cancel_button
+        self.progressbar     = progressbar
+        self._break          = False
+    
+        self.th              = threading.Thread(target=self._start)
+        self.th.daemon       = True
+        
+    def _start(self):
+        GLib.idle_add(self.revealer.set_reveal_child,True)
+        GLib.idle_add(self.download_button.set_sensitive,False)
+        GLib.idle_add(self.parent.choicefile_b.set_sensitive,False)
+        GLib.idle_add(self.parent.cansel_b.set_sensitive,False)
+        GLib.idle_add(self.cancel_button.set_sensitive,True)
+        try:
+            url   = request.Request(self.link,headers={"User-Agent":"Mozilla/5.0"})
+            opurl = request.urlopen(url,timeout=6)
+            try:
+                saveas = opurl.headers["Content-Disposition"].split("=",1)[-1]
+            except Exception as e:
+                #print(e)
+                saveas = os.path.basename(opurl.url)
+            saveas = os.path.join(self.location,saveas)
+            
+            size = int(opurl.headers["Content-Length"])
+            psize = 0
+            with open(saveas, 'wb') as op:
+                while True:
+                    if self._break:
+                        GLib.idle_add(self.progressbar.set_text,_("Cancel clicked...")) ###
+                        GLib.idle_add(self.progressbar.set_fraction,0.0)
+                        GLib.idle_add(self.download_button.set_sensitive,True)
+                        GLib.idle_add(self.parent.choicefile_b.set_sensitive,True)
+                        GLib.idle_add(self.parent.cansel_b.set_sensitive,True)
+                        GLib.idle_add(self.cancel_button.set_sensitive,False)
+                        return 
+                    chunk = opurl.read(600)
+                    if not chunk:
+                        break
+                    count = int((psize*100)//size)
+                    fraction = count/100
+                    op.write(chunk)
+                    psize += 600
+                    GLib.idle_add(self.progressbar.set_fraction,fraction)
+                    GLib.idle_add(self.progressbar.set_text,_("Downloading ")+str(count)+"%") ###
+            
+            GLib.idle_add(self.progressbar.set_fraction,1.0)
+            GLib.idle_add(self.progressbar.set_text,_("Done")) ###
+            GLib.idle_add(self.download_button.set_sensitive,True)
+            GLib.idle_add(self.parent.choicefile_b.set_sensitive,True)
+            GLib.idle_add(self.parent.cansel_b.set_sensitive,True)
+            GLib.idle_add(self.cancel_button.set_sensitive,False)
+            UnpackZip([saveas],self.unpack_target,self.spinner,self.parent).start()
+            
+        except Exception as e:
+            print(e)
+            GLib.idle_add(self.progressbar.set_fraction,0.0)
+            GLib.idle_add(self.progressbar.set_text,str(e))
+            GLib.idle_add(self.download_button.set_sensitive,True)
+            GLib.idle_add(self.parent.choicefile_b.set_sensitive,True)
+            GLib.idle_add(self.parent.cansel_b.set_sensitive,True)
+            GLib.idle_add(self.cancel_button.set_sensitive,False)
+            return False
+        return saveas
+        
 class AddData(Gtk.Window):
     __gsignals__ = {
         "success"     : (GObject.SignalFlags.RUN_LAST, None, ()),
     }
     
-    def __init__(self, w=None,audio_data_location="",msg=""):
+    def __init__(self, w=None,audio_data_location="",msg="",istarajem=None):
         Gtk.Window.__init__(self)
         self.w = w
         self.audio_data_location = audio_data_location
@@ -764,6 +842,7 @@ class AddData(Gtk.Window):
         self.set_modal(True)
         self.set_deletable(True)
         self.set_transient_for(w)
+        self.downloaddata = False
         vb = Gtk.VBox()
         hb = Gtk.HBox()
         
@@ -790,18 +869,46 @@ class AddData(Gtk.Window):
         self.fvbox.pack_start(self.choicefile_label,False,False,0)
         self.svbox.pack_start(self.choicefile_b,False,False,0)
 
+        self.istarajem = istarajem
+        if self.istarajem!=None:
+            if self.istarajem:
+                self.__uri = "http://quran.ksu.edu.sa/ayat/tarajem.ayt"
+            else:
+                self.__uri = "http://quran.ksu.edu.sa/ayat/tafasir.ayt"
+            
+            self.download_button = Gtk.Button()
+            self.download_button.props.label = _("Download") 
+            
+            
+            self.cancel_button   = Gtk.Button()
+            self.cancel_button.props.label = _("Cancel Download")
+            self.cancel_button.set_sensitive(False)
+            
+            self.revealer   = Gtk.Revealer()
+            self.progressbar = Gtk.ProgressBar()
+            self.progressbar.props.show_text = True
+            
+            self.download_button.connect("clicked", self.on_download_clicked)
+            self.cancel_button.connect("clicked", self.on_cancel_clicked)
+            
+            self.revealer.add(self.progressbar)
+            self.fvbox.pack_start(self.download_button,True,True,0)
+            self.svbox.pack_start(self.cancel_button,True,True,0)
+            vb.pack_start(self.revealer,True,True,0)
+            
+            
 
         self.open_audio_location_button = Gtk.Button()
         self.open_audio_location_button.props.label = _("Open Data Location")
         self.open_audio_location_button.connect("clicked",self.on_open_data_location_button_clicked)
         
         buttonbox = Gtk.HBox()        
-        cansel_button = Gtk.Button()
-        cansel_button.props.label = _("Cancel")
-        cansel_button.connect("clicked",self._on_cancel_button_clicked)
+        self.cansel_b = Gtk.Button()
+        self.cansel_b.props.label = _("Cancel")
+        self.cansel_b.connect("clicked",self._on_cancel_button_clicked)
         
         buttonbox.pack_start(self.open_audio_location_button,True,False,0)
-        buttonbox.pack_start(cansel_button,True,False,0)
+        buttonbox.pack_start(self.cansel_b,True,False,0)
         
         vb.pack_start(linkbutton,True,False,0)
         vb.pack_start(label,True,False,0)
@@ -814,7 +921,14 @@ class AddData(Gtk.Window):
         
         self.add(vb)
         self.show_all()
-
+        
+    def on_download_clicked(self, button):
+        self.downloaddata = DownloadDataThread(self,self.w,self.revealer,self.spinner,self.__uri,os.path.dirname(self.audio_data_location),self.audio_data_location,self.download_button,self.cancel_button,self.progressbar)
+        self.downloaddata.th.start()
+    
+    def on_cancel_clicked(self, button):
+        self.downloaddata._break = True
+        
     def on_file_button_clicked(self, button):
         self.__files.clear()
         dialog = Gtk.FileChooserDialog(_("Please choose a files"), self,
@@ -855,6 +969,8 @@ class AddData(Gtk.Window):
             u_.start()
 
     def _on_cancel_button_clicked(self,*argv):
+        if self.downloaddata:
+            self.downloaddata._break = True
         self.destroy()
         
 class Yes_Or_No(Gtk.MessageDialog):

@@ -45,14 +45,19 @@ clone repository and run othman-browser (requires pygi and gstreamer(to run mp3 
 
 # Screenshot
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture1.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Screenshot2.png "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture2.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Screenshot3.png "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture3.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Screenshot4.png "Screenshot")
 
-![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture4.JPG "Screenshot")
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Screenshot5.png "Screenshot")
+
+![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Screenshot6.png "Screenshot")
 
 ![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture6.JPG "Screenshot")
 
 ![Alt text](https://raw.githubusercontent.com/yucefsourani/unofficial-othman-electronic-quran-browser/master/Capture7.JPG "Screenshot")
+
+
+
