@@ -370,7 +370,7 @@ class ShowTarajemTafasir(Gtk.Window):
                 self.revealer.set_transition_type(Gtk.RevealerTransitionType.SLIDE_LEFT)
             
                 self.__old_search_text = ""
-                self.search_entry = Gtk.SearchEntry(placeholder_text="Search...")
+                self.search_entry = Gtk.SearchEntry(placeholder_text=_("Search..."))
                 self.search_entry.props.margin_start  = 15
                 self.search_entry.props.margin_end    = 15
                 self.search_entry.props.margin_top    = 5
@@ -464,30 +464,11 @@ class ShowTarajemTafasir(Gtk.Window):
             sw2=Gtk.ScrolledWindow()
             sw2.set_policy(Gtk.PolicyType.AUTOMATIC,Gtk.PolicyType.AUTOMATIC)
             
-            sw1.set_size_request (150, 1)
+            sw1.set_size_request(150, 1)
         
             paned = Gtk.Paned()
             paned.props.wide_handle = True
             self.maincontainer.pack_start(paned,True,True,0)
-            css = b"""paned separator.wide {
-
-                        background-image: linear-gradient(to left, transparent, transparent 1px, #999 1px, #999 4px, transparent 4px);
-                        background-size: 100% 15%;
-                        background-repeat: no-repeat;
-                        background-position: center center;
-                    }
-
-                    paned separator.wide:hover {
-                        background-image: linear-gradient(to left, transparent, transparent 1px, #555 1px, #555 4px, transparent 4px);
-                    }
-                    paned separator.wide:active {
-                        background-image: linear-gradient(to left, transparent, transparent 100px, #555 111px, #555 114px, transparent 114px);
-                    }
-                """
-            style_provider = Gtk.CssProvider()
-            style_provider.load_from_data(css)
-            Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-            
             self.listbox_ = Gtk.ListBox()
             sw1.add(self.listbox_)
             paned.add1(sw1)
@@ -811,31 +792,7 @@ class AddData(Gtk.Window):
         self.__files = []
         self.msg = msg
         self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT )
-        css = b"""
-                .h1 {
-                    font-size: 24px;
-                }
-                .h2 {
-                    font-weight: 300;
-                    font-size: 18px;
-                }
-                .h3 {
-                    font-size: 11px;
-                }
-                .h4 {
-                    color: alpha (@text_color, 0.7);
-                    font-weight: bold;
-                    text-shadow: 0 1px @text_shadow_color;
-                }
-                .h4 {
-                    padding-bottom: 6px;
-                    padding-top: 6px;
-                }
-                """
-        style_provider = Gtk.CssProvider()
-        style_provider.load_from_data(css)
-        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        
+
         self.connect('delete-event', self._on_cancel_button_clicked)
         self.last_txt = None
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
@@ -1072,9 +1029,44 @@ class othmanUi(Gtk.Window, othmanCore):
         os.makedirs(self.tafasir_data_location,exist_ok=True)
  
         
-        #style_provider = Gtk.CssProvider()
-        #style_provider.load_from_data(css)
-        #Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        css = b"""
+                .h1 {
+                    font-size: 24px;
+                }
+                .h2 {
+                    font-weight: 300;
+                    font-size: 18px;
+                }
+                .h3 {
+                    font-size: 11px;
+                }
+                .h4 {
+                    color: alpha (@text_color, 0.7);
+                    font-weight: bold;
+                    text-shadow: 0 1px @text_shadow_color;
+                }
+                .h4 {
+                    padding-bottom: 6px;
+                    padding-top: 6px;
+                }
+                paned separator.wide {
+
+                    background-image: linear-gradient(to left, transparent, transparent 1px, #999 1px, #999 4px, transparent 4px);
+                    background-size: 100% 15%;
+                    background-repeat: no-repeat;
+                    background-position: center center;
+                }
+                paned separator.wide:hover {
+                    background-image: linear-gradient(to left, transparent, transparent 1px, #555 1px, #555 4px, transparent 4px);
+                }
+                paned separator.wide:active {
+                    background-image: linear-gradient(to left, transparent, transparent 100px, #555 111px, #555 114px, transparent 114px);
+                }
+                """
+
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_data(css)
+        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         
         if  sys.platform.startswith('win'):
             if not check_amiri_font(self):
@@ -1105,12 +1097,47 @@ class othmanUi(Gtk.Window, othmanCore):
         self.add(vb)
         hb = Gtk.HBox(False,2)
         vb.pack_start(hb, False, False, 0)
+        
+        self.scroll2 = Gtk.ScrolledWindow()
+        self.scroll2.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+        self.scroll2.connect_after("size-allocate", self.resize_cb)
 
-        self.scroll = Gtk.ScrolledWindow()
-        self.scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
-        self.scroll.connect_after("size-allocate", self.resize_cb)
-        vb.pack_start(self.scroll, True, True, 6)
+        self.scroll1 = Gtk.ScrolledWindow()
+        self.scroll1.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.ALWAYS)
+        self.scroll1.set_size_request (150, 1)
 
+        hb_search_entry   = Gtk.Grid()
+        self.search_entry = Gtk.SearchEntry(placeholder_text= _("Search..."))
+        self.search_entry.props.margin_start  = 15
+        self.search_entry.props.margin_end    = 15
+        self.search_entry.props.margin_top    = 5
+        self.search_entry.props.margin_bottom = 5
+        self.search_entry.props.max_length    = 30
+        hb_search_entry.add(self.search_entry)
+                
+        overl           = Gtk.Overlay()
+        self.listbox_vb = Gtk.VBox()
+        self.listbox_   = Gtk.ListBox()
+        self.listbox_vb.pack_start(hb_search_entry,False,False,0)
+        self.listbox_vb.pack_start(self.scroll1,True,True,0)
+        self.scroll1.add(self.listbox_)
+
+        
+        self.paned     = Gtk.Paned()
+        self.paned.props.position    = 0
+        self.paned.props.wide_handle = True
+        self.paned.add1(self.listbox_vb)
+        self.paned.add2(self.scroll2)
+        vb.pack_start(self.paned, True, True, 6)
+        
+
+        img = Gtk.Image.new_from_icon_name("system-search-symbolic", Gtk.IconSize.BUTTON)
+        self.search_b = Gtk.ToggleButton()
+        self.search_b.set_tooltip_text(_("Search For Sura"))
+        self.search_b.add(img)
+        self.search_b.connect("toggled", self._on_search_button_toggled)
+        hb.pack_start(self.search_b ,False, False, 5)
+        
         img = Gtk.Image()
         img.set_from_stock(Gtk.STOCK_COPY, Gtk.IconSize.BUTTON)
         self.cp_b = Gtk.Button()
@@ -1126,9 +1153,21 @@ class othmanUi(Gtk.Window, othmanCore):
         self.sura_c.set_wrap_width(5)
         for i in self.sura_ls:
             self.sura_c.append_text(i)
+            category_label = Gtk.Label()
+            category_label.set_label(i)
+            row_ = Gtk.ListBoxRow()
+            row_.props.activatable = True
+            row_.props.selectable = True
+            row_.add(category_label)
+            self.listbox_.add(row_)
+        
+
         self.sura_c.set_tooltip_text(_("choose a Sura"))
-        self.sura_c.connect("changed", self.sura_changed_cb)
+        self.sura_c_handler = self.sura_c.connect("changed", self.sura_changed_cb)
         hb.pack_start(self.sura_c, False, False, 0)
+        self.listbox_.set_filter_func(self._listbox_filter_func,self.search_entry)
+        self.search_entry_handler  = self.search_entry.connect("search-changed", self._on_search,self.listbox_)
+        self.listbox__handler = self.listbox_.connect("row-selected",self.on_selected_row)
 
 
         ##############################################################
@@ -1327,7 +1366,7 @@ class othmanUi(Gtk.Window, othmanCore):
         for i in self.cols:
             self.txt_list.insert_column(i, -1)
 
-        self.scroll.add(self.txt_list)
+        self.scroll2.add(self.txt_list)
         
         ##################################################################
         last_sura_aya = self.get_last_sura_aya()
@@ -1338,19 +1377,22 @@ class othmanUi(Gtk.Window, othmanCore):
             __aya  = last_sura_aya[1]
             if __sura in (0,8):
                 self.sura_c.set_active(__sura)
+                self.listbox_.select_row(self.listbox_.get_row_at_index(__sura))
                 self.txt_list.get_selection().select_path((__aya-1,))
                 self.txt_list.scroll_to_cell(__aya-1,self.cols[0])
                 #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([__aya]),self.cols[0])
             else:
                 self.sura_c.set_active(__sura)
+                self.listbox_.select_row(self.listbox_.get_row_at_index(__sura))
                 self.txt_list.get_selection().select_path((__aya,))
                 self.txt_list.scroll_to_cell(__aya,self.cols[0])
                 #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([__aya]),self.cols[0])
         else:
             self.sura_c.set_active(0)
+            self.listbox_.select_row(self.listbox_.get_row_at_index(0))
             self.txt_list.get_selection().select_path((0,))
             #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([0]),self.cols[0])
-
+    
         self.menu = Gtk.Menu()
         self.menu.set_screen(Gdk.Screen().get_default())
         
@@ -1384,7 +1426,44 @@ class othmanUi(Gtk.Window, othmanCore):
         self.connect("key-press-event", self._on_key_press)
         #self.txt_list.connect("row_activated",self.on_row_activated)
         #self.txt_list.connect("cursor_changed",self.on_cursor_changed)
+        self.scroll1.get_vadjustment().set_value((self.scroll1.get_vadjustment().get_upper()/114)*self.sura_c.get_active())
 
+    def _on_search_button_toggled(self,button):
+        if button.get_active():
+            self.paned.props.position = 200
+        else:
+            self.paned.props.position = 0
+
+    def on_selected_row(self, listbox,listboxrow):
+        with GObject.Object.handler_block(self.sura_c,self.sura_c_handler):
+            index_ = listboxrow.get_index()
+            self.sura_c.set_active(index_)
+            self.viewSura(self.sura_c.get_active() + 1)
+            self._stop_audio()
+            self.tb.set_active(False)
+            t_ = self.search_entry.get_text()
+            self.queue_draw()
+            #while Gtk.events_pending():
+            #    Gtk.main_iteration()
+            if t_ :
+                self.search_entry.set_text("")
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
+                self.scroll1.get_vadjustment().set_value((self.scroll1.get_vadjustment().get_upper()/114)*index_)
+
+        
+    def _listbox_filter_func(self, listbox,entry):
+        text = entry.get_text()
+        if not text:
+            return listbox
+        lbl = listbox.get_child().props.label
+        if text.lower() in lbl.lower():
+            return listbox 
+            
+            
+    def _on_search(self, entry,listbox):
+        listbox.invalidate_filter()
+        
     def on_color_menu(self,button,color_button):
         color_button.emit("clicked")
     
@@ -1774,7 +1853,7 @@ class othmanUi(Gtk.Window, othmanCore):
             self.__can_play = True
             self.scroll_delay = 200
             return True
-        v = self.scroll.get_vadjustment()
+        v = self.scroll2.get_vadjustment()
         m = v.get_upper() - v.get_page_size()
         n = min(m, v.get_value() + 2 )
         if n == m:
@@ -1803,6 +1882,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self.queue_draw()
         self.viewSura(sura)
         self.viewAya(aya)
+        self.search_b.set_active(False)
 
     def zoomOut(self, *a):
         sura, aya = self.getCurrentSuraAya()
@@ -1813,6 +1893,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self.queue_draw()
         self.viewSura(sura)
         self.viewAya(aya)
+        self.search_b.set_active(False)
 
     def viewAya(self, aya, sura = None):
         if sura == None:
@@ -1832,14 +1913,17 @@ class othmanUi(Gtk.Window, othmanCore):
         for j, k in enumerate(self.getSuraIter(i)):
             self.txt.append([k[0], j + 1, "#204000",])
         self.resize_cb()
-        self.scroll.get_vadjustment().set_value(0)
+        self.scroll2.get_vadjustment().set_value(0)
         self.txt_list.get_selection().select_path((0,))
-
+        
 
     def sura_changed_cb(self, c, *a):
         self.viewSura(self.sura_c.get_active() + 1)
         self._stop_audio()
         self.tb.set_active(False)
+        with GObject.Object.handler_block(self.listbox_,self.listbox__handler):
+            self.listbox_.select_row(self.listbox_.get_row_at_index(self.sura_c.get_active()))
+            self.scroll1.get_vadjustment().set_value((self.scroll1.get_vadjustment().get_upper()/114)*self.sura_c.get_active())
 
     def resize_cb(self,*args):
         if self.cols[0].get_width() > 10:
