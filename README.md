@@ -32,7 +32,7 @@ https://github.com/ojuba-org/othman
  * make rpm package/copr repository.
  * make flatpak package .
  
-# Download For Windows (for testing only) (64bit)
+# Download For Windows (for testing only) (64bit) (Not Up-To-Date)
 
 لتنزيله على ويندوز للتجربة فقط
 
