@@ -1135,7 +1135,8 @@ class othmanUi(Gtk.Window, othmanCore):
         self.search_b = Gtk.ToggleButton()
         self.search_b.set_tooltip_text(_("Search For Sura"))
         self.search_b.add(img)
-        self.search_b.connect("toggled", self._on_search_button_toggled)
+        self.search_b_handler = self.search_b.connect("toggled", self._on_search_button_toggled)
+        self.paned_handler    = self.paned.connect("notify::position", self._on_paned_position_changed)
         hb.pack_start(self.search_b ,False, False, 5)
         
         img = Gtk.Image()
@@ -1428,11 +1429,19 @@ class othmanUi(Gtk.Window, othmanCore):
         #self.txt_list.connect("cursor_changed",self.on_cursor_changed)
         self.scroll1.get_vadjustment().set_value((self.scroll1.get_vadjustment().get_upper()/114)*self.sura_c.get_active())
 
+    def _on_paned_position_changed(self,paned,prop):
+        with GObject.Object.handler_block(self.search_b,self.search_b_handler):
+            if paned.props.position==0 and self.search_b.get_active():
+                self.search_b.set_active(False)
+            elif paned.props.position!=0 and not self.search_b.get_active():
+                self.search_b.set_active(True)
+    
     def _on_search_button_toggled(self,button):
-        if button.get_active():
-            self.paned.props.position = 200
-        else:
-            self.paned.props.position = 0
+        with GObject.Object.handler_block(self.paned,self.paned_handler):
+            if button.get_active():
+                self.paned.props.position = 200
+            else:
+                self.paned.props.position = 0
 
     def on_selected_row(self, listbox,listboxrow):
         with GObject.Object.handler_block(self.sura_c,self.sura_c_handler):
@@ -1882,11 +1891,8 @@ class othmanUi(Gtk.Window, othmanCore):
         self.queue_draw()
         self.viewSura(sura)
         self.viewAya(aya)
-        if self.search_b.get_active():
-            self.search_b.set_active(False)
-        else:
-            if self.paned.props.position !=0 :
-                self.paned.props.position = 0
+        self.search_b.set_active(False)
+
                 
     def zoomOut(self, *a):
         sura, aya = self.getCurrentSuraAya()
@@ -1897,11 +1903,8 @@ class othmanUi(Gtk.Window, othmanCore):
         self.queue_draw()
         self.viewSura(sura)
         self.viewAya(aya)
-        if self.search_b.get_active():
-            self.search_b.set_active(False)
-        else:
-            if self.paned.props.position !=0 :
-                self.paned.props.position = 0
+        self.search_b.set_active(False)
+
 
     def viewAya(self, aya, sura = None):
         if sura == None:
