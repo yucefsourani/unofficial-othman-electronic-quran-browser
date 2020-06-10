@@ -1882,8 +1882,12 @@ class othmanUi(Gtk.Window, othmanCore):
         self.queue_draw()
         self.viewSura(sura)
         self.viewAya(aya)
-        self.search_b.set_active(False)
-
+        if self.search_b.get_active():
+            self.search_b.set_active(False)
+        else:
+            if self.paned.props.position !=0 :
+                self.paned.props.position = 0
+                
     def zoomOut(self, *a):
         sura, aya = self.getCurrentSuraAya()
         self.scale -= 0.1
@@ -1893,7 +1897,11 @@ class othmanUi(Gtk.Window, othmanCore):
         self.queue_draw()
         self.viewSura(sura)
         self.viewAya(aya)
-        self.search_b.set_active(False)
+        if self.search_b.get_active():
+            self.search_b.set_active(False)
+        else:
+            if self.paned.props.position !=0 :
+                self.paned.props.position = 0
 
     def viewAya(self, aya, sura = None):
         if sura == None:
