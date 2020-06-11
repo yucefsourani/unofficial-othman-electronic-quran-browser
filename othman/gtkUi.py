@@ -1650,14 +1650,140 @@ class othmanUi(Gtk.Window, othmanCore):
             aya = self.txt[self.txt.get_path(a[1])][0]
             self.clip2.set_text(aya, -1) 
         
+    def create_bookmarks_file(self):
+        config_location = os.path.join(GLib.get_user_config_dir(),"othman")
+        config_file     = os.path.join(config_location,"bookmarks.json")
+        os.makedirs(config_location,exist_ok=True)
+        if not os.path.isfile(config_file):
+            try:
+                config = {"sura_aya_bookmarks":list()}
+                with open(config_file,"w") as mf:
+                    json.dump(config,mf,indent=4)
+            except Exception as e:
+                print(e)
+                return False
+        try :
+            with open(config_file) as mf:
+                config = json.load(mf)
+        except Exception as e:
+            os.remove(config_file)
+            return self.create_bookmarks_file()
+
+        return True
         
+    def get_is_bookmark(self):
+        if not self.create_bookmarks_file():
+            return False
+        config_file = os.path.join(os.path.join(GLib.get_user_config_dir(),"othman"),"bookmarks.json")
+        if os.path.isfile(config_file):
+            try:
+                with open(config_file) as mf:
+                    config = json.load(mf)
+            except Exception as e:
+                print(e)
+                return False
+            for i in config["sura_aya_bookmarks"]:
+                if i==[self.__sura_current,self.__aya_current]:
+                    return True
+        return False
+
+    def get_bookmark(self):
+        if not self.create_bookmarks_file():
+            return 
+        config_file = os.path.join(os.path.join(GLib.get_user_config_dir(),"othman"),"bookmarks.json")
+        if os.path.isfile(config_file):
+            try:
+                with open(config_file) as mf:
+                    config = json.load(mf)
+            except Exception as e:
+                print(e)
+                return False
+            return config
+        return False
+        
+    def add_bookmark(self):
+        if not self.create_bookmarks_file():
+            return 
+        config_location = os.path.join(GLib.get_user_config_dir(),"othman")
+        config_file     = os.path.join(config_location,"bookmarks.json")
+        config = self.get_bookmark()
+        if (self.__sura_current,self.__aya_current) not in config["sura_aya_bookmarks"]:
+            config["sura_aya_bookmarks"].append((self.__sura_current,self.__aya_current))
+        try:
+            with open(config_file,"w") as mf:
+                json.dump(config,mf,indent=4)
+        except Exception as e:
+            print(e)
+            return False
+        return True
+        
+    def on_bookmark(self,button):
+        if self._is_bookmark:
+            return self.remove_bookmark()
+        else:
+            return self.add_bookmark()
+            
+    def remove_bookmark(self):
+        if not self.create_bookmarks_file():
+            return 
+        config_location = os.path.join(GLib.get_user_config_dir(),"othman")
+        config_file     = os.path.join(config_location,"bookmarks.json")
+        config = self.get_bookmark()
+        result = {"sura_aya_bookmarks": list() }
+        for i in config["sura_aya_bookmarks"]:
+            if i!=[self.__sura_current,self.__aya_current]:
+                result["sura_aya_bookmarks"].append(i)
+        try:
+            with open(config_file,"w") as mf:
+                json.dump(result,mf,indent=4)
+        except Exception as e:
+            print(e)
+            return False
+        return True
+                
     def _on_button_press_event_treeview(self,treeview,event):
+        self.txt_list.queue_draw()
+        self.queue_draw()
+        while Gtk.events_pending():
+            Gtk.main_iteration()
+
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
-            self.menu.popup_at_pointer()
-            self.queue_draw()
-            #while Gtk.events_pending():
-            #    Gtk.main_iteration()
-            #self.menu.show_all()
+            menu = Gtk.Menu()
+            menu.set_screen(Gdk.Screen().get_default())
+        
+            playmenuitem    = Gtk.MenuItem.new_with_label(_("Play"))
+            if not self.__all_audio:
+                playmenuitem.set_sensitive(False)
+            tarajemmenuitem  = Gtk.MenuItem.new_with_label(_("Tarajem"))
+            tafasirmenuitem  = Gtk.MenuItem.new_with_label(_("Tafsir"))
+            copymenuitem     = Gtk.MenuItem.new_with_label(_("Copy"))
+            colorbgmenuitem  = Gtk.MenuItem.new_with_label(_("bg Color"))
+            colorfgmenuitem  = Gtk.MenuItem.new_with_label(_("fg  Color"))
+            
+            self.__sura_current,self.__aya_current = self.getCurrentSuraAya()
+            self._is_bookmark = self.get_is_bookmark()
+            if not self._is_bookmark:
+                bookmarkmenuitem  = Gtk.MenuItem.new_with_label(_("Add To Bookmarks"))
+            else:
+                bookmarkmenuitem  = Gtk.MenuItem.new_with_label(_("Remove From Bookmarks"))
+            
+            playmenuitem.connect("activate", self._play_audio,True)
+            tarajemmenuitem.connect("activate", self.get_current_info_aya_tarajem)
+            tafasirmenuitem.connect("activate", self.get_current_info_aya_tafasir)
+            copymenuitem.connect("activate", self.on_copy_menu)
+            colorbgmenuitem.connect("activate", self.on_color_menu,self.color_button_bg)
+            colorfgmenuitem.connect("activate", self.on_color_menu,self.color_button_fg)
+            bookmarkmenuitem.connect("activate", self.on_bookmark)
+        
+            menu.append(playmenuitem)
+            menu.append(tarajemmenuitem)
+            menu.append(tafasirmenuitem)
+            menu.append(copymenuitem)
+            menu.append(colorbgmenuitem)
+            menu.append(colorfgmenuitem)
+            menu.append(bookmarkmenuitem)
+            menu.show_all()
+            menu.popup_at_pointer()
             
     def _on_key_press(self,widget, event):
         if (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_s:
