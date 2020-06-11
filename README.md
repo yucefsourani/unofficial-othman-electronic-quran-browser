@@ -24,11 +24,10 @@ https://github.com/ojuba-org/othman
   12. Other things like add some shortcuts and ...
   
 # To Do 
- * improve Gui main windows and ...
+ * Add shortcut window
  * trying support macOS .
  * Fix pot/mo files.
  * add bookmark aya .
- * Fix setup.py file .
  * make rpm package/copr repository.
  * make flatpak package .
  
