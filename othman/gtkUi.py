@@ -1394,7 +1394,7 @@ class othmanUi(Gtk.Window, othmanCore):
             self.txt_list.get_selection().select_path((0,))
             #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([0]),self.cols[0])
     
-        self.menu = Gtk.Menu()
+        """self.menu = Gtk.Menu()
         self.menu.set_screen(Gdk.Screen().get_default())
         
         self.playmenuitem    = Gtk.MenuItem.new_with_label(_("Play"))
@@ -1419,7 +1419,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self.menu.append(self.copymenuitem)
         self.menu.append(self.colorbgmenuitem)
         self.menu.append(self.colorfgmenuitem)
-        self.menu.show_all()
+        self.menu.show_all()"""
         
         self.build_cp_dlg()
         self.show_all()
@@ -1637,12 +1637,6 @@ class othmanUi(Gtk.Window, othmanCore):
             return result
         return False
 
-        
-    def on_tarajem_menu(self,w):
-        self.get_current_info_aya_tarajem()
-        
-    def on_tafasir_menu(self,w):
-        self.get_current_info_aya_tafasir()
          
     def on_copy_menu(self,w):
         a = self.txt_list.get_selection().get_selected()
@@ -1742,10 +1736,10 @@ class othmanUi(Gtk.Window, othmanCore):
         return True
                 
     def _on_button_press_event_treeview(self,treeview,event):
-        self.txt_list.queue_draw()
+        """self.txt_list.queue_draw()
         self.queue_draw()
         while Gtk.events_pending():
-            Gtk.main_iteration()
+            Gtk.main_iteration()"""
 
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
             menu = Gtk.Menu()
@@ -2150,7 +2144,7 @@ class othmanUi(Gtk.Window, othmanCore):
         aya = max(aya, 1)
         return self.sura_c.get_active() + 1, aya
 
-    def get_current_info_aya_tarajem(self):
+    def get_current_info_aya_tarajem(self,b=None):
         sura_n,aya_n = self.get_sura_aya()
         conn = None
         sura = self.sura_c.get_active_text()
@@ -2161,7 +2155,7 @@ class othmanUi(Gtk.Window, othmanCore):
                     _("Add Tarajem Sources"),
                     _("Add Tarajem from ayat"),_("Show Tarajem"),sura_n+1,aya_n,sura,aya,_("Tarajem Not Available"),self.__all_audio,True)
 
-    def get_current_info_aya_tafasir(self):
+    def get_current_info_aya_tafasir(self,b=None):
         sura_n,aya_n = self.get_sura_aya()
         conn = None
         sura = self.sura_c.get_active_text()
