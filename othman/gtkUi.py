@@ -160,7 +160,7 @@ shortcut_main_window_ui = """<?xml version="1.0" encoding="UTF-8"?>
           <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title" translatable="yes">Quit</property>
-                <property name="accelerator">&lt;ctrl&gt;Escape</property>
+                <property name="accelerator">Escape</property>
               </object>
             </child>
             <child>
