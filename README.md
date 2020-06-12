@@ -24,7 +24,6 @@ https://github.com/ojuba-org/othman
   12. Other things like add some shortcuts and ...
   
 # To Do 
- * Add shortcut window
  * trying support macOS .
  * Fix pot/mo files.
  * add bookmark aya .
