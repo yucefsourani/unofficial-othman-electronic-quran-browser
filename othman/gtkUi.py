@@ -1587,6 +1587,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self.scroll1.get_vadjustment().set_value((self.scroll1.get_vadjustment().get_upper()/114)*self.sura_c.get_active())
 
     def on_shortcut_button_clicked(self,button):
+        self.menu_popover.popdown()
         builder = Gtk.Builder.new_from_string(shortcut_main_window_ui, -1)
         shortcut_window = builder.get_object("shortcuts-main-win")
         shortcut_window.set_transient_for(self) 
@@ -2094,6 +2095,7 @@ class othmanUi(Gtk.Window, othmanCore):
     ############################
     
     def show_about_dlg(self, parent):
+        self.menu_popover.popdown()
         dlg = Gtk.AboutDialog()
         dlg.set_type_hint(Gdk.WindowTypeHint.DIALOG)
         dlg.set_modal(True)
@@ -2249,6 +2251,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self.cp_to.set_value(m)
 
     def show_cp_dlg(self, *a):
+        self.menu_popover.popdown()
         sura, aya = self.getCurrentSuraAya()
         aya = max(1, abs(aya))
         self.cp_sura.set_active(sura - 1)
