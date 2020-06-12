@@ -37,17 +37,18 @@ Gst.init(None)
 PY2 = sys.version_info[0]==2
 BYTE = str if PY2 else bytes
 
-shortcut_main_window_ui = """<interface>
+shortcut_main_window_ui = """<?xml version="1.0" encoding="UTF-8"?>
+<interface>
   <object class="GtkShortcutsWindow" id="shortcuts-main-win">
     <property name="modal">1</property>
     <child>
       <object class="GtkShortcutsSection">
-        <property name="max-height">6</property>
+        <property name="section-name">editor</property>
         <property name="visible">1</property>
-        <property name="section-name">shortcuts</property>
+        <property name="title" translatable="yes">Main Window</property>
         <child>
           <object class="GtkShortcutsGroup">
-            <property name="title" translatable="yes">Main Window</property>
+            <property name="title" translatable="yes">General</property>
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="title" translatable="yes">Save</property>
@@ -96,7 +97,7 @@ shortcut_main_window_ui = """<interface>
                 <property name="accelerator">&lt;ctrl&gt;c</property>
               </object>
             </child>
-            <child>
+            <child>##
               <object class="GtkShortcutsShortcut">
                 <property name="title" translatable="yes">Auto Scrolling Speed Up</property>
                 <property name="accelerator">&lt;ctrl&gt;b</property>
@@ -143,6 +144,79 @@ shortcut_main_window_ui = """<interface>
                 <property name="accelerator">&lt;ctrl&gt;Right</property>
               </object>
             </child> 
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkShortcutsSection">
+        <property name="max-height">16</property>
+        <property name="visible">1</property>
+        <property name="section-name">Tafasir - Tarajem</property>
+        <property name="title" translatable="yes">Tafasir - Tarajem</property>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes">General</property>
+          <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Quit</property>
+                <property name="accelerator">&lt;ctrl&gt;Escape</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Backward Aya</property>
+                <property name="accelerator">&lt;ctrl&gt;Left</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Forward Aya</property>
+                <property name="accelerator">&lt;ctrl&gt;Right</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Zoom In</property>
+                <property name="accelerator">&lt;ctrl&gt;z</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Zoom Out</property>
+                <property name="accelerator">&lt;ctrl&gt;x</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Play Audio</property>
+                <property name="accelerator">&lt;ctrl&gt;f</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Stop Audio</property>
+                <property name="accelerator">&lt;ctrl&gt;d</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Search</property>
+                <property name="accelerator">&lt;ctrl&gt;s</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Up Tarajem/Tafasir</property>
+                <property name="accelerator">&lt;ctrl&gt;Up</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Down Tarajem/Tafasir</property>
+                <property name="accelerator">&lt;ctrl&gt;Down</property>
+              </object>
+            </child>
           </object>
         </child>
       </object>
