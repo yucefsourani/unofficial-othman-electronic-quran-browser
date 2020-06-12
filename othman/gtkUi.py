@@ -37,6 +37,120 @@ Gst.init(None)
 PY2 = sys.version_info[0]==2
 BYTE = str if PY2 else bytes
 
+shortcut_main_window_ui = """<interface>
+  <object class="GtkShortcutsWindow" id="shortcuts-main-win">
+    <property name="modal">1</property>
+    <child>
+      <object class="GtkShortcutsSection">
+        <property name="max-height">6</property>
+        <property name="visible">1</property>
+        <property name="section-name">shortcuts</property>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes">Main Window</property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Save</property>
+                <property name="accelerator">&lt;ctrl&gt;s</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Dark Mode</property>
+                <property name="accelerator">&lt;ctrl&gt;d</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Find</property>
+                <property name="accelerator">&lt;ctrl&gt;f</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Zoom In</property>
+                <property name="accelerator">&lt;ctrl&gt;z</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Zoom Out</property>
+                <property name="accelerator">&lt;ctrl&gt;x</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Popup Menu</property>
+                <property name="accelerator">&lt;ctrl&gt;a</property>
+              </object>
+            </child>            
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Popup Sura Combo</property>
+                <property name="accelerator">&lt;ctrl&gt;e</property>
+              </object>
+            </child>  
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Auto Scrolling On/Off</property>
+                <property name="accelerator">&lt;ctrl&gt;c</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Auto Scrolling Speed Up</property>
+                <property name="accelerator">&lt;ctrl&gt;b</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Auto Scrolling Speed Down</property>
+                <property name="accelerator">&lt;ctrl&gt;v</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcutsGroup">
+            <property name="title" translatable="yes"></property>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Copy Window</property>
+                <property name="accelerator">&lt;ctrl&gt;q</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Play Audio</property>
+                <property name="accelerator">&lt;ctrl&gt;g</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Stop Audio</property>
+                <property name="accelerator">&lt;ctrl&gt;h</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Seek Audio Backward</property>
+                <property name="accelerator">&lt;ctrl&gt;Left</property>
+              </object>
+            </child> 
+            <child>
+              <object class="GtkShortcutsShortcut">
+                <property name="title" translatable="yes">Seek Audio Forward</property>
+                <property name="accelerator">&lt;ctrl&gt;Right</property>
+              </object>
+            </child> 
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
+"""
+
 class searchWindow(Gtk.Window):
     def __init__(self, w):
         Gtk.Window.__init__(self)
@@ -1139,13 +1253,14 @@ class othmanUi(Gtk.Window, othmanCore):
         self.paned_handler    = self.paned.connect("notify::position", self._on_paned_position_changed)
         hb.pack_start(self.search_b ,False, False, 5)
         
-        img = Gtk.Image()
-        img.set_from_stock(Gtk.STOCK_COPY, Gtk.IconSize.BUTTON)
+        cp_b_label = Gtk.Label()
+        cp_b_label.props.label = _("Copy To Clipboard")
         self.cp_b = Gtk.Button()
-        self.cp_b.set_tooltip_text(_("Copy To Clipboard"))
-        self.cp_b .add(img)
+        self.cp_b.set_relief(Gtk.ReliefStyle.NONE)
+        self.cp_b .add(cp_b_label)
         self.cp_b .connect("clicked", self.show_cp_dlg)
-        hb.pack_start(self.cp_b ,False, False, 0)
+
+
         hb.pack_start(Gtk.VSeparator(), False, False, 6)
         hb.pack_start(Gtk.Label(_("Sura")), False, False, 0)
 
@@ -1291,24 +1406,24 @@ class othmanUi(Gtk.Window, othmanCore):
         search.connect("activate", self.search_cb)
         self.search = search
 
-        hb.pack_start(Gtk.VSeparator(),False, False, 6)
-        img = Gtk.Image()
-        img.set_from_stock(Gtk.STOCK_ABOUT, Gtk.IconSize.BUTTON)
-        b = Gtk.Button()
-        b.set_tooltip_text(_("About"))
-        b.add(img)
-        hb.pack_start(b, False, False, 0)
-        b.connect("clicked", lambda *a: self.show_about_dlg(self))
+        about_label  = Gtk.Label()
+        about_label.props.label = _("About")
+        about_b = Gtk.Button()
+        about_b.set_relief(Gtk.ReliefStyle.NONE)
+        about_b.add(about_label)
+        about_b.connect("clicked", lambda *a: self.show_about_dlg(self))
 
 
         ############################
+        
+        darkmode_switch_label  = Gtk.Label()
+        darkmode_switch_label.props.label = "Dark Mode"
         defaultsettings = Gtk.Settings.get_default()
         self.darkmode_switch = Gtk.Switch()
-        self.darkmode_switch.set_tooltip_text(_("Dark Mode"))
         self.darkmode_switch.connect("state_set",self._on_darkmode_switch_state_changed,defaultsettings)
         self.darkmode_switch.props.active = defaultsettings.props.gtk_application_prefer_dark_theme
-        hb.pack_start(Gtk.VSeparator(),False, False, 6)
-        hb.pack_start(self.darkmode_switch,False, False, 6)
+        #hb.pack_start(Gtk.VSeparator(),False, False, 6)
+        
         
         self.color_button_bg = Gtk.ColorButton.new_with_color(Gdk.Color.parse("#fffff8")[-1])
         self.color_button_bg.set_tooltip_text(_("Background Color"))
@@ -1320,6 +1435,48 @@ class othmanUi(Gtk.Window, othmanCore):
         #hb.pack_start(self.color_button_bg,False, False, 6)
         #hb.pack_start(self.color_button_fg,False, False, 6)
         
+    
+        shortcut_label  = Gtk.Label()
+        shortcut_label.props.label = _("Shortcut")
+        shortcut_b = Gtk.Button()
+        shortcut_b.set_relief(Gtk.ReliefStyle.NONE)
+        shortcut_b.add(shortcut_label)
+        shortcut_b.connect("clicked",self.on_shortcut_button_clicked)
+
+        
+        
+        img = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
+        self.setting_menu_b = Gtk.Button()
+        #self.setting_menu_b.set_tooltip_text(_(""))
+        self.setting_menu_b.add(img)
+        self.setting_menu_b.connect("clicked", self.on_setting_menu_b_clicked)
+
+        setting_menu_vbox = Gtk.VBox()
+        setting_menu_vbox.props.spacing = 1
+        
+        setting_menu_hbox = Gtk.HBox()
+        setting_menu_hbox.props.spacing = 1
+        
+        setting_menu_v1   = Gtk.VBox()
+        setting_menu_v1.props.homogeneous = True
+        setting_menu_v2   = Gtk.VBox()
+        setting_menu_v2.props.homogeneous = True
+        
+        self.menu_popover = Gtk.Popover.new(self.setting_menu_b)
+        self.menu_popover.add(setting_menu_vbox)
+        
+        setting_menu_v1.pack_start(darkmode_switch_label,True, True, 10)
+        setting_menu_v2.pack_start(self.darkmode_switch,True, True, 10)
+
+        
+        setting_menu_hbox.pack_start(setting_menu_v1,True, True, 10)
+        setting_menu_hbox.pack_start(setting_menu_v2,True, True, 10)
+        setting_menu_vbox.pack_start(setting_menu_hbox,True, True, 3)
+        setting_menu_vbox.pack_start(Gtk.HSeparator(), True, True, 10)
+        setting_menu_vbox.pack_start(self.cp_b,False, False, 1)
+        setting_menu_vbox.pack_start(shortcut_b,False, False, 1)
+        setting_menu_vbox.pack_start(about_b,False, False, 1)
+        hb.pack_start(self.setting_menu_b,False, False, 0)
         
         """hb.pack_start(Gtk.VSeparator(), False, False, 6)
         hb.pack_start(Gtk.Label(_("Tarajem")), False, False, 0)
@@ -1428,6 +1585,16 @@ class othmanUi(Gtk.Window, othmanCore):
         #self.txt_list.connect("row_activated",self.on_row_activated)
         #self.txt_list.connect("cursor_changed",self.on_cursor_changed)
         self.scroll1.get_vadjustment().set_value((self.scroll1.get_vadjustment().get_upper()/114)*self.sura_c.get_active())
+
+    def on_shortcut_button_clicked(self,button):
+        builder = Gtk.Builder.new_from_string(shortcut_main_window_ui, -1)
+        shortcut_window = builder.get_object("shortcuts-main-win")
+        shortcut_window.set_transient_for(self) 
+        shortcut_window.show_all()
+
+    def on_setting_menu_b_clicked(self,button):
+        self.menu_popover.popup()
+        self.menu_popover.show_all()
 
     def _on_paned_position_changed(self,paned,prop):
         with GObject.Object.handler_block(self.search_b,self.search_b_handler):
