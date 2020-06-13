@@ -1625,7 +1625,7 @@ class othmanUi(Gtk.Window, othmanCore):
             self.txt_list.get_selection().select_path((0,))
             #self.txt_list.row_activated(Gtk.TreePath.new_from_indices([0]),self.cols[0])
     
-        """self.menu = Gtk.Menu()
+        self.menu = Gtk.Menu()
         self.menu.set_screen(Gdk.Screen().get_default())
         
         self.playmenuitem    = Gtk.MenuItem.new_with_label(_("Play"))
@@ -1638,8 +1638,8 @@ class othmanUi(Gtk.Window, othmanCore):
         self.colorfgmenuitem  = Gtk.MenuItem.new_with_label(_("fg  Color"))
     
         self.playmenuitem.connect("activate", self._play_audio,True)
-        self.tarajemmenuitem.connect("activate", self.on_tarajem_menu)
-        self.tafasirmenuitem.connect("activate", self.on_tafasir_menu)
+        self.tarajemmenuitem.connect("activate", self.get_current_info_aya_tarajem)
+        self.tafasirmenuitem.connect("activate", self.get_current_info_aya_tafasir)
         self.copymenuitem.connect("activate", self.on_copy_menu)
         self.colorbgmenuitem.connect("activate", self.on_color_menu,self.color_button_bg)
         self.colorfgmenuitem.connect("activate", self.on_color_menu,self.color_button_fg)
@@ -1650,7 +1650,7 @@ class othmanUi(Gtk.Window, othmanCore):
         self.menu.append(self.copymenuitem)
         self.menu.append(self.colorbgmenuitem)
         self.menu.append(self.colorfgmenuitem)
-        self.menu.show_all()"""
+        self.menu.show_all()
         
         self.build_cp_dlg()
         self.show_all()
@@ -1984,7 +1984,7 @@ class othmanUi(Gtk.Window, othmanCore):
             Gtk.main_iteration()"""
 
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 3:
-            menu = Gtk.Menu()
+            """menu = Gtk.Menu()
             menu.set_screen(Gdk.Screen().get_default())
         
             playmenuitem    = Gtk.MenuItem.new_with_label(_("Play"))
@@ -2019,7 +2019,8 @@ class othmanUi(Gtk.Window, othmanCore):
             menu.append(colorfgmenuitem)
             menu.append(bookmarkmenuitem)
             menu.show_all()
-            menu.popup_at_pointer()
+            menu.popup_at_pointer()"""
+            self.menu.popup_at_pointer()
             
     def _on_key_press(self,widget, event):
         if (event.state & Gdk.ModifierType.CONTROL_MASK) and event.keyval == Gdk.KEY_s:
