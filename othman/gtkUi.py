@@ -828,7 +828,7 @@ class ShowTarajemTafasir(Gtk.Window):
                 self.in_text("<span foreground='red' size='large' weight='bold'>{}</span>".format(self.aya))
                 row = rows[0]
                 if row:
-                    txt = re.sub(self.cleanr, '', row[0].replace("<br>","\n"))
+                    txt = re.sub(self.cleanr, '', row[0].replace("</p>","\n").replace("<br>","\n"))
                     self.in_text("<span foreground='green' size='x-large'>{}</span>".format(txt))
                     #self.show_all()
                     self.__check = True
