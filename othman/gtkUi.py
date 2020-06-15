@@ -1792,7 +1792,7 @@ class othmanUi(Gtk.Window, othmanCore):
                     if pos>=2*1000000000:
                         self.pipeline.seek_simple(Gst.Format.TIME,  Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,pos-(2*1000000000)) 
                     else:
-                        self.pipeline2.seek_simple(Gst.Format.TIME,  Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,0)
+                        self.pipeline.seek_simple(Gst.Format.TIME,  Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,0)
         else:
             if  self.pipeline2.get_state(Gst.CLOCK_TIME_NONE )[1]==Gst.State.PLAYING:
                 pos = self.pipeline2.query_position(Gst.Format.TIME)
